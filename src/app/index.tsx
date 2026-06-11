@@ -7,6 +7,22 @@ export default function Index() {
   return (
     <View style={styles.container}>
       <Button title="Go to Login" onPress={() => router.push("/auth/login")} />
+      <Button
+        title="Go to Register"
+        onPress={() => router.push("/auth/register")}
+      />
+      <Button
+        title="Go to Forgot Password"
+        onPress={() => router.push("/auth/forgot_password")}
+      />
+      <Button
+        title="Go to OTP Page"
+        onPress={() => router.push("/auth/otp_page")}
+      />
+      <Button
+        title="Go to Create New Password"
+        onPress={() => router.push("/auth/create_new_password_page")}
+      />
     </View>
   );
 }

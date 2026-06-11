@@ -1,4 +1,5 @@
-import { Icon, useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
   Alert,
@@ -71,7 +72,12 @@ export default function LoginPage() {
               {/* <Text style={styles.toggle}>
                 {hidePassword ? "Show" : "Hide"}
               </Text> */}
-              
+
+              <Ionicons
+                name={hidePassword ? "eye-off" : "eye"}
+                size={22}
+                color={"#000b58"}
+              />
             </TouchableOpacity>
           </View>
 
