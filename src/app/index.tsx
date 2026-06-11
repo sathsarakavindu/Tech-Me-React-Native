@@ -1,13 +1,12 @@
-import { StyleSheet, View } from "react-native";
-import LoginPage from "./auth/login";
+import { useRouter } from "expo-router";
+import { Button, StyleSheet, View } from "react-native";
 
 export default function Index() {
+  const router = useRouter();
+
   return (
-    <View>
-      <LoginPage />
-      {/* <Text style={styles.text_style}>
-        Edit src/app/index.tsx to edit this screen.
-      </Text> */}
+    <View style={styles.container}>
+      <Button title="Go to Login" onPress={() => router.push("/auth/login")} />
     </View>
   );
 }
@@ -15,7 +14,7 @@ export default function Index() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
+    alignItems: "center"
   }
 });

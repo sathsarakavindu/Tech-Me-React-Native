@@ -1,5 +1,6 @@
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
+import { StatusBar } from "expo-status-bar";
 import { ActivityIndicator } from "react-native";
 
 export default function RootLayout() {
@@ -12,5 +13,11 @@ export default function RootLayout() {
     return <ActivityIndicator />;
   }
 
-  return <Stack />;
+  return (
+    <>
+      <StatusBar style="light" />
+
+      <Stack screenOptions={{ headerShown: false }} />
+    </>
+  );
 }
