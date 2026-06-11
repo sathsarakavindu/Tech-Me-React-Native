@@ -1,20 +1,20 @@
-import { StyleSheet, Text, View } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 
 export default function LoginPage() {
   return (
-    <View style={style.container}>
-      <Text style={style.text_style}>Login Page</Text>
+    <View style={styles.container}>
+      <Text style={styles.text}>Login Page</Text>
     </View>
   );
 }
 
-const style = StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
+    justifyContent: "center",
     alignItems: "center",
-    justifyContent: "center"
   },
-  text_style: {
-    fontFamily: "appFont"
-  }
+  text: {
+    fontSize: 20,
+  },
 });
