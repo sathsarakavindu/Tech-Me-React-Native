@@ -51,7 +51,7 @@ export default function UserAccountPage() {
         <Text style={styles.title}>Account</Text>
 
         <Image
-          source={require("../../assets/cover_account.png")}
+          source={require("../../../../assets/images/account/cover_account.png")}
           style={styles.cover}
         />
       </View>

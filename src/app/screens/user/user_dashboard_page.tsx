@@ -1,14 +1,21 @@
 import {
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View
 } from "react-native";
 
 import { Ionicons } from "@expo/vector-icons";
+import { useState } from "react";
 
 export default function DashboardScreen() {
+  const [getRequestHelp, setRequestHelp] = useState(false);
+
+  const handleReqHelp = () => {
+    setRequestHelp(!getRequestHelp);
+  };
+
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       {/* Header */}
@@ -21,73 +28,64 @@ export default function DashboardScreen() {
         </View>
 
         <TouchableOpacity>
-          <Ionicons name="notifications-outline" size={28} color="#0F172A" />
+          <Ionicons name="notifications-outline" size={28} color="#F8FAFC" />
         </TouchableOpacity>
       </View>
 
       {/* Emergency Card */}
 
-      <TouchableOpacity style={styles.emergencyCard}>
+      <View style={styles.emergencyCard}>
         <Ionicons name="car-sport" size={40} color="#fff" />
 
         <Text style={styles.emergencyTitle}>Need Roadside Assistance?</Text>
 
         <Text style={styles.emergencySubTitle}>Request help instantly</Text>
 
-        <View style={styles.helpButton}>
+        <TouchableOpacity
+          style={styles.helpButton}
+          onPress={() => handleReqHelp()}
+        >
           <Text style={styles.helpText}>Request Help</Text>
-        </View>
-      </TouchableOpacity>
-
-      {/* Statistics */}
-
-      <View style={styles.statsContainer}>
-        <View style={styles.statCard}>
-          <Text style={styles.statNumber}>12</Text>
-
-          <Text>Requests</Text>
-        </View>
-
-        <View style={styles.statCard}>
-          <Text style={styles.statNumber}>8</Text>
-
-          <Text>Completed</Text>
-        </View>
+        </TouchableOpacity>
       </View>
+
+      {/* Map Section */}
+
+      {getRequestHelp && (
+        <>
+          <Text style={styles.sectionTitle}>Live Tracking</Text>
+
+          <View style={styles.mapPlaceholder}>
+            <Ionicons name="map" size={50} color="#94A3B8" />
+
+            <Text>Google Map Here</Text>
+          </View>
+        </>
+      )}
 
       {/* Vehicles */}
 
       <Text style={styles.sectionTitle}>My Vehicles</Text>
 
       <TouchableOpacity style={styles.vehicleCard}>
-        <Ionicons name="car" size={32} color="#2563EB" />
+        <Ionicons name="car" size={32} color="#000000" />
 
         <View>
           <Text style={styles.vehicleName}>Toyota Prius</Text>
 
-          <Text>WP CAB 1234</Text>
+          <Text style={styles.vehicle_no}>WP CAB 1234</Text>
         </View>
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.vehicleCard}>
-        <Ionicons name="car" size={32} color="#2563EB" />
+        <Ionicons name="car" size={32} color="#000000" />
 
         <View>
           <Text style={styles.vehicleName}>Honda Vezel</Text>
 
-          <Text>WP CAR 9876</Text>
+          <Text style={styles.vehicle_no}>WP CAR 9876</Text>
         </View>
       </TouchableOpacity>
-
-      {/* Map Section */}
-
-      <Text style={styles.sectionTitle}>Live Tracking</Text>
-
-      <View style={styles.mapPlaceholder}>
-        <Ionicons name="map" size={50} color="#94A3B8" />
-
-        <Text>Google Map Here</Text>
-      </View>
     </ScrollView>
   );
 }
@@ -95,7 +93,7 @@ export default function DashboardScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F8FAFC"
+    backgroundColor: "#000b58"
   },
 
   header: {
@@ -109,21 +107,22 @@ const styles = StyleSheet.create({
 
   greeting: {
     fontSize: 16,
-    color: "#64748B",
-    fontFamily: "Poppins-Regular"
+    color: "#F8FAFC",
+    fontFamily: "appFont"
+    //backgroundColor: "#F8FAFC"
   },
 
   name: {
-    fontSize: 24,
-    fontFamily: "Poppins-Bold",
-    color: "#0F172A"
+    fontSize: 20,
+    fontFamily: "appFontBold",
+    color: "#F8FAFC"
   },
 
   emergencyCard: {
     margin: 20,
     padding: 25,
 
-    backgroundColor: "#2563EB",
+    backgroundColor: "#F8FAFC",
 
     borderRadius: 24,
 
@@ -131,31 +130,30 @@ const styles = StyleSheet.create({
   },
 
   emergencyTitle: {
-    color: "#fff",
+    color: "#000000",
     fontSize: 22,
     marginTop: 10,
-    fontFamily: "Poppins-Bold"
+    fontFamily: "appFont"
   },
 
   emergencySubTitle: {
-    color: "#E2E8F0",
-    marginTop: 5
+    color: "#000000",
+    marginTop: 5,
+    fontFamily: "appFont"
   },
 
   helpButton: {
     marginTop: 20,
-
-    backgroundColor: "#fff",
-
-    paddingHorizontal: 25,
+    backgroundColor: "#000000",
+    paddingHorizontal: 18,
     paddingVertical: 12,
-
     borderRadius: 50
   },
 
   helpText: {
-    fontFamily: "Poppins-SemiBold",
-    color: "#2563EB"
+    fontFamily: "appFont",
+    color: "#F8FAFC",
+    fontSize: 14
   },
 
   statsContainer: {
@@ -191,9 +189,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
 
     fontSize: 18,
-    fontFamily: "Poppins-Bold",
+    fontFamily: "appFont",
 
-    color: "#0F172A"
+    color: "#ffffff"
   },
 
   vehicleCard: {
@@ -216,7 +214,10 @@ const styles = StyleSheet.create({
 
   vehicleName: {
     fontSize: 16,
-    fontFamily: "Poppins-SemiBold"
+    fontFamily: "appFontSemiBold"
+  },
+  vehicle_no: {
+    fontFamily: "appFont"
   },
 
   mapPlaceholder: {

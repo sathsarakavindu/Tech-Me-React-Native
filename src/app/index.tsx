@@ -26,7 +26,12 @@ export default function Index() {
 
       <Button
         title="Go to User Dashboard"
-        onPress={() => router.push("/user/dashboard")}
+        onPress={() => router.push("/screens/user/user_dashboard_page")}
+      />
+
+      <Button
+        title="Go to User Account"
+        onPress={() => router.push("/screens/user/user_account")}
       />
     </View>
   );
