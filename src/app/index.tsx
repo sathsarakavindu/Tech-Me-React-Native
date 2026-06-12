@@ -23,6 +23,11 @@ export default function Index() {
         title="Go to Create New Password"
         onPress={() => router.push("/auth/create_new_password_page")}
       />
+
+      <Button
+        title="Go to User Dashboard"
+        onPress={() => router.push("/user/dashboard")}
+      />
     </View>
   );
 }

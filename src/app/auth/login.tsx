@@ -69,10 +69,6 @@ export default function LoginPage() {
             />
 
             <TouchableOpacity onPress={() => setHidePassword(!hidePassword)}>
-              {/* <Text style={styles.toggle}>
-                {hidePassword ? "Show" : "Hide"}
-              </Text> */}
-
               <Ionicons
                 name={hidePassword ? "eye-off" : "eye"}
                 size={22}
@@ -91,9 +87,11 @@ export default function LoginPage() {
             <Text style={styles.link}>Create an Account</Text>
           </TouchableOpacity>
 
-          {/* <TouchableOpacity onPress={() => router.push("")}>
+          <TouchableOpacity
+            onPress={() => router.push("/auth/forgot_password")}
+          >
             <Text style={styles.link}>Forgot Password?</Text>
-          </TouchableOpacity> */}
+          </TouchableOpacity>
 
           {/* Google Login */}
           <Text style={styles.orText}>Or Sign In with</Text>
@@ -137,6 +135,7 @@ const styles = StyleSheet.create({
   },
 
   title: {
+    fontFamily: "appFont",
     fontSize: 26,
     fontWeight: "bold",
     textAlign: "center",
