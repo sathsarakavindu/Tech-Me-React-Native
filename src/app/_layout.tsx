@@ -6,7 +6,8 @@ import { ActivityIndicator } from "react-native";
 export default function RootLayout() {
   const [fontsLoaded] = useFonts({
     appFont: require("./../../assets/fonts/Poppins-Regular.ttf"),
-    appFontBold: require("./../../assets/fonts/Poppins-Bold.ttf")
+    appFontBold: require("./../../assets/fonts/Poppins-Bold.ttf"),
+    appFontSemiBold: require("./../../assets/fonts/Poppins-SemiBold.ttf")
   });
 
   if (!fontsLoaded) {

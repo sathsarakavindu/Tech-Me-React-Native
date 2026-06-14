@@ -23,6 +23,30 @@ export default function Index() {
         title="Go to Create New Password"
         onPress={() => router.push("/auth/create_new_password_page")}
       />
+
+      <Button
+        title="Go to User Dashboard"
+        onPress={() => router.push("/screens/user/user_dashboard_page")}
+      />
+
+      <Button
+        title="Go to User Account"
+        onPress={() => router.push("/screens/user/user_account")}
+      />
+
+      <Button
+        title="Go to Technician Dashboard"
+        onPress={() => router.push("/screens/technician/technician_dashboard")}
+      />
+      <Button
+        title="Go to Technician History"
+        onPress={() => router.push("/screens/technician/technician_history")}
+      />
+
+      <Button
+        title="Go to Add Vehicle"
+        onPress={() => router.push("/screens/user/add_vehicle")}
+      />
     </View>
   );
 }
