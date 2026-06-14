@@ -42,6 +42,11 @@ export default function Index() {
         title="Go to Technician History"
         onPress={() => router.push("/screens/technician/technician_history")}
       />
+
+      <Button
+        title="Go to Add Vehicle"
+        onPress={() => router.push("/screens/user/add_vehicle")}
+      />
     </View>
   );
 }
