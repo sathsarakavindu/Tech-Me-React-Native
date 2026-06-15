@@ -1,12 +1,12 @@
 import { useRouter } from "expo-router";
 import { useRef, useState } from "react";
 import {
-    Alert,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View
+  Alert,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
 } from "react-native";
 
 export default function OtpPage() {
@@ -106,7 +106,7 @@ export default function OtpPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#0B0F2F"
+    backgroundColor: "#000b58"
   },
 
   header: {
@@ -119,13 +119,15 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 26,
     fontWeight: "700",
-    color: "#fff"
+    color: "#fff",
+    fontFamily: "appFontBold"
   },
 
   subtitle: {
     color: "#A0A0B2",
     marginTop: 10,
-    textAlign: "center"
+    textAlign: "center",
+    fontFamily: "appFont"
   },
 
   card: {
@@ -152,22 +154,25 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     textAlign: "center",
     fontSize: 18,
-    backgroundColor: "#F4F5F7"
+    backgroundColor: "#F4F5F7",
+    fontFamily: "appFont"
   },
 
   resendText: {
     marginTop: 25,
-    color: "#666"
+    color: "#666",
+    fontFamily: "appFont"
   },
 
   resendAction: {
     color: "#0B0F2F",
-    fontWeight: "700"
+    fontWeight: "700",
+    fontFamily: "appFontBold"
   },
 
   button: {
     backgroundColor: "#0B0F2F",
-    padding: 15,
+    padding: 12,
     borderRadius: 12,
     width: "100%",
     marginTop: 30,
@@ -176,12 +181,15 @@ const styles = StyleSheet.create({
 
   buttonText: {
     color: "#fff",
-    fontWeight: "600"
+    fontWeight: "600",
+    fontFamily: "appFont",
+    marginTop: 5
   },
 
   backText: {
     marginTop: 20,
-    color: "#0B0F2F",
-    fontWeight: "600"
+    color: "#000000",
+    fontWeight: "600",
+    fontFamily: "appFont"
   }
 });

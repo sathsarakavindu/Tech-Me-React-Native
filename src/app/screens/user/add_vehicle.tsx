@@ -1,16 +1,16 @@
-import React, { useState } from "react";
+import { Ionicons } from "@expo/vector-icons";
+import * as ImagePicker from "expo-image-picker";
+import { useState } from "react";
 import {
-  View,
+  Image,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
-  Image,
-  StyleSheet,
-  ScrollView,
-  SafeAreaView,
+  View
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import * as ImagePicker from "expo-image-picker";
 
 export default function AddVehicleScreen() {
   const [image, setImage] = useState<string | null>(null);
@@ -22,7 +22,7 @@ export default function AddVehicleScreen() {
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      quality: 0.8,
+      quality: 0.8
     });
 
     if (!result.canceled) {
@@ -43,7 +43,7 @@ export default function AddVehicleScreen() {
             <Image source={{ uri: image }} style={styles.image} />
           ) : (
             <View style={styles.imagePlaceholder}>
-              <Ionicons name="camera-outline" size={40} color="#fff" />
+              <Ionicons name="camera-outline" size={40} color="#000000" />
               <Text style={styles.uploadText}>Upload Vehicle Image</Text>
             </View>
           )}
@@ -52,10 +52,10 @@ export default function AddVehicleScreen() {
         {/* Input Fields */}
         <View style={styles.card}>
           <View style={styles.inputBox}>
-            <Ionicons name="car-outline" size={20} color="#fff" />
+            <Ionicons name="car-outline" size={20} color="#000000" />
             <TextInput
               placeholder="Vehicle Number (EX: WP-CAD-5617)"
-              placeholderTextColor="#aaa"
+              placeholderTextColor="#696666"
               style={styles.input}
               value={vehicleNo}
               onChangeText={setVehicleNo}
@@ -63,7 +63,7 @@ export default function AddVehicleScreen() {
           </View>
 
           <View style={styles.inputBox}>
-            <Ionicons name="construct-outline" size={20} color="#fff" />
+            <Ionicons name="construct-outline" size={20} color="#000000" />
             <TextInput
               placeholder="Model (EX: Suzuki Alto 2017)"
               placeholderTextColor="#aaa"
@@ -74,7 +74,7 @@ export default function AddVehicleScreen() {
           </View>
 
           <View style={styles.inputBox}>
-            <Ionicons name="color-palette-outline" size={20} color="#fff" />
+            <Ionicons name="color-palette-outline" size={20} color="#000000" />
             <TextInput
               placeholder="Color"
               placeholderTextColor="#aaa"
@@ -86,9 +86,9 @@ export default function AddVehicleScreen() {
 
           {/* Dropdown (UI only) */}
           <TouchableOpacity style={styles.dropdown}>
-            <Ionicons name="list-outline" size={20} color="#fff" />
+            <Ionicons name="list-outline" size={20} color="#000000" />
             <Text style={styles.dropdownText}>{type}</Text>
-            <Ionicons name="chevron-down" size={20} color="#fff" />
+            <Ionicons name="chevron-down" size={20} color="#000000" />
           </TouchableOpacity>
         </View>
 
@@ -104,68 +104,72 @@ export default function AddVehicleScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#070B2D",
-    paddingHorizontal: 16,
+    backgroundColor: "#000b58",
+    paddingHorizontal: 16
   },
 
   title: {
     fontSize: 28,
     fontWeight: "bold",
-    color: "#fff",
-    marginTop: 10,
+    color: "#ffffff",
+    marginTop: 30,
+    fontFamily: "appFontBold"
   },
 
   subtitle: {
-    color: "#aaa",
+    color: "#ffffff",
     marginBottom: 20,
+    fontFamily: "appFont"
   },
 
   imageCard: {
     height: 180,
     borderRadius: 16,
-    backgroundColor: "#11163A",
+    backgroundColor: "#ffffff",
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 20,
-    overflow: "hidden",
+    overflow: "hidden"
   },
 
   imagePlaceholder: {
-    alignItems: "center",
+    alignItems: "center"
   },
 
   uploadText: {
-    color: "#fff",
+    color: "#000000",
     marginTop: 10,
+    fontFamily: "appFont"
   },
 
   image: {
     width: "100%",
     height: "100%",
-    borderRadius: 16,
+    borderRadius: 16
   },
 
   card: {
-    backgroundColor: "#11163A",
+    backgroundColor: "#ffffff",
     padding: 16,
-    borderRadius: 16,
+    borderRadius: 16
   },
 
   inputBox: {
     flexDirection: "row",
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "#2a2f55",
+    borderColor: "#000000",
     borderRadius: 12,
     paddingHorizontal: 12,
     marginBottom: 12,
-    height: 50,
+    height: 50
   },
 
   input: {
     flex: 1,
     marginLeft: 10,
-    color: "#fff",
+    color: "#000000",
+    fontFamily: "appFont"
   },
 
   dropdown: {
@@ -176,26 +180,28 @@ const styles = StyleSheet.create({
     borderColor: "#2a2f55",
     borderRadius: 12,
     paddingHorizontal: 12,
-    height: 50,
+    height: 50
   },
 
   dropdownText: {
-    color: "#fff",
+    color: "#000000",
     flex: 1,
     marginLeft: 10,
+    fontFamily: "appFont"
   },
 
   button: {
-    backgroundColor: "#4C5BFF",
+    backgroundColor: "#ffffff",
     paddingVertical: 14,
     borderRadius: 12,
     marginTop: 20,
-    alignItems: "center",
+    alignItems: "center"
   },
 
   buttonText: {
-    color: "#fff",
+    color: "#000000",
     fontSize: 16,
     fontWeight: "bold",
-  },
+    fontFamily: "appFontBold"
+  }
 });

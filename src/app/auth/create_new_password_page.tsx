@@ -2,14 +2,14 @@ import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
-    Alert,
-    KeyboardAvoidingView,
-    Platform,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
 } from "react-native";
 
 export default function NewPasswordPage() {
@@ -129,7 +129,7 @@ export default function NewPasswordPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#0B0F2F"
+    backgroundColor: "#000b58"
   },
 
   header: {
@@ -142,15 +142,17 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: "700",
-    color: "#fff",
-    marginTop: 15
+    color: "#ffffff",
+    marginTop: 15,
+    fontFamily: "appFont"
   },
 
   subtitle: {
     color: "#A0A0B2",
     textAlign: "center",
     marginTop: 10,
-    fontSize: 13
+    fontSize: 13,
+    fontFamily: "appFont"
   },
 
   card: {
@@ -173,19 +175,22 @@ const styles = StyleSheet.create({
 
   input: {
     flex: 1,
-    marginLeft: 10
+    marginLeft: 10,
+    fontFamily: "appFont",
+    marginTop: 5
   },
 
   hint: {
     marginTop: 20,
     fontSize: 12,
     color: "#666",
-    lineHeight: 18
+    lineHeight: 18,
+    fontFamily: "appFont"
   },
 
   button: {
     backgroundColor: "#0B0F2F",
-    padding: 15,
+    padding: 12,
     borderRadius: 12,
     marginTop: 25,
     alignItems: "center"
@@ -193,13 +198,16 @@ const styles = StyleSheet.create({
 
   buttonText: {
     color: "#fff",
-    fontWeight: "600"
+    fontWeight: "600",
+    fontFamily: "appFont",
+    marginTop: 5
   },
 
   back: {
     marginTop: 20,
     textAlign: "center",
-    color: "#0B0F2F",
-    fontWeight: "600"
+    color: "#000000",
+    fontWeight: "600",
+    fontFamily: "appFont"
   }
 });
