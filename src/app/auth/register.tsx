@@ -189,7 +189,7 @@ export default function RegisterPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#0B0F2F"
+    backgroundColor: "#000b58"
   },
 
   header: {
@@ -201,12 +201,14 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: "700",
-    color: "#fff"
+    color: "#ffffff",
+    fontFamily: "appFontBold"
   },
 
   subtitle: {
     color: "#A0A0B2",
-    marginTop: 5
+    marginTop: 5,
+    fontFamily: "appFont"
   },
 
   card: {
@@ -229,7 +231,8 @@ const styles = StyleSheet.create({
 
   input: {
     flex: 1,
-    marginLeft: 10
+    marginLeft: 10,
+    fontFamily: "appFont"
   },
 
   dropdown: {
@@ -246,7 +249,8 @@ const styles = StyleSheet.create({
   dropdownText: {
     flex: 1,
     marginLeft: 10,
-    color: "#333"
+    color: "#333",
+    fontFamily: "appFont"
   },
 
   button: {
@@ -258,7 +262,8 @@ const styles = StyleSheet.create({
 
   buttonText: {
     color: "#fff",
-    fontWeight: "600"
+    fontWeight: "600",
+    fontFamily: "appFont"
   },
 
   link: {

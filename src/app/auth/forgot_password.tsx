@@ -1,16 +1,16 @@
-import React, { useState } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  StyleSheet,
-  TouchableOpacity,
-  KeyboardAvoidingView,
-  Platform,
-  Alert,
-} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import { useState } from "react";
+import {
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
+} from "react-native";
 
 export default function ForgotPasswordPage() {
   const router = useRouter();
@@ -36,7 +36,7 @@ export default function ForgotPasswordPage() {
     // simulate API call
     setTimeout(() => {
       setLoading(false);
-    //   router.push("/auth/otp");
+      //   router.push("/auth/otp");
     }, 1000);
   };
 
@@ -70,10 +70,7 @@ export default function ForgotPasswordPage() {
         </View>
 
         {/* CONTINUE BUTTON */}
-        <TouchableOpacity
-          style={styles.button}
-          onPress={handleContinue}
-        >
+        <TouchableOpacity style={styles.button} onPress={handleContinue}>
           <Text style={styles.buttonText}>
             {loading ? "Sending..." : "Continue"}
           </Text>
@@ -94,14 +91,14 @@ export default function ForgotPasswordPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#0B0F2F",
+    backgroundColor: "#000b58"
   },
 
   header: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    paddingHorizontal: 20,
+    paddingHorizontal: 20
   },
 
   title: {
@@ -109,6 +106,7 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     color: "#fff",
     marginTop: 15,
+    fontFamily: "appFontBold"
   },
 
   subtitle: {
@@ -116,6 +114,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginTop: 10,
     fontSize: 14,
+    fontFamily: "appFont"
   },
 
   card: {
@@ -123,7 +122,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
-    padding: 20,
+    padding: 20
   },
 
   inputBox: {
@@ -133,34 +132,40 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     borderRadius: 12,
     height: 52,
-    marginTop: 20,
+    marginTop: 20
   },
 
   input: {
     flex: 1,
     marginLeft: 10,
+    marginTop: 4,
+    fontFamily: "appFont",
+    fontSize: 12
   },
 
   button: {
-    backgroundColor: "#0B0F2F",
-    padding: 15,
+    backgroundColor: "#000000",
+    padding: 12,
     borderRadius: 12,
     marginTop: 25,
-    alignItems: "center",
+    alignItems: "center"
   },
 
   buttonText: {
     color: "#fff",
     fontWeight: "600",
+    fontFamily: "appFont",
+    marginTop: 2
   },
 
   backButton: {
     marginTop: 20,
-    alignItems: "center",
+    alignItems: "center"
   },
 
   backText: {
     color: "#0B0F2F",
     fontWeight: "600",
-  },
+    fontFamily: "appFont"
+  }
 });
