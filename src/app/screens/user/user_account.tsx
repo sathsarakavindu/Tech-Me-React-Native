@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  Image,
-  StyleSheet,
-  Dimensions,
-  SafeAreaView,
-  TouchableOpacity,
-} from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
+import { useEffect, useState } from "react";
+import {
+  Dimensions,
+  Image,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View
+} from "react-native";
 import AccountOptionsCard from "../../../components/account_option_card";
 
 const { width } = Dimensions.get("window");
@@ -34,7 +34,7 @@ export default function UserAccountPage() {
 
   const signOut = async () => {
     await AsyncStorage.clear();
-   // router.replace("/login");
+    // router.replace("/login");
   };
 
   return (
@@ -43,17 +43,17 @@ export default function UserAccountPage() {
       <View style={styles.header}>
         <Image
           source={{
-            uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRKc6EnanoKKj61vCCamKeDwXelxNzUElzIWWDgf75XNEa1-uaHgiSq32hF7bp73Tq9nsY",
+            uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRKc6EnanoKKj61vCCamKeDwXelxNzUElzIWWDgf75XNEa1-uaHgiSq32hF7bp73Tq9nsY"
           }}
           style={styles.profile}
         />
 
         <Text style={styles.title}>Account</Text>
 
-        <Image
+        {/* <Image
           source={require("../../../../assets/images/account/cover_account.png")}
           style={styles.cover}
-        />
+        /> */}
       </View>
 
       {/* OPTIONS */}
@@ -95,12 +95,12 @@ export default function UserAccountPage() {
 
       {/* BOTTOM NAV */}
       <View style={styles.bottomBar}>
-        <TouchableOpacity >
+        <TouchableOpacity>
           <Text>Home</Text>
         </TouchableOpacity>
 
         {isUserAccount === true && (
-          <TouchableOpacity >
+          <TouchableOpacity>
             <Text>Vehicle</Text>
           </TouchableOpacity>
         )}
@@ -120,7 +120,7 @@ export default function UserAccountPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#000b58",
+    backgroundColor: "#000b58"
   },
 
   header: {
@@ -128,14 +128,14 @@ const styles = StyleSheet.create({
     height: width * 0.5,
     borderRadius: 20,
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "center"
   },
 
   cover: {
     position: "absolute",
     width: "100%",
     height: "100%",
-    resizeMode: "contain",
+    resizeMode: "contain"
   },
 
   profile: {
@@ -143,17 +143,17 @@ const styles = StyleSheet.create({
     height: width * 0.3,
     borderRadius: 100,
     position: "absolute",
-    top: width * 0.15,
+    top: width * 0.15
   },
 
   title: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "black",
+    color: "black"
   },
 
   body: {
-    marginTop: 20,
+    marginTop: 20
   },
 
   bottomBar: {
@@ -163,6 +163,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     position: "absolute",
     bottom: 0,
-    width: "100%",
-  },
+    width: "100%"
+  }
 });
