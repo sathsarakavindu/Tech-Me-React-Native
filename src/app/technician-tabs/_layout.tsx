@@ -14,9 +14,8 @@ export default function TechnicianTabLayout() {
           paddingTop: 10,
           position: "absolute",
           borderRadius: 20,
-
           marginHorizontal: 10,
-          marginBottom: 25
+          marginBottom: 55
         },
         tabBarActiveTintColor: "#4C5BFF",
         tabBarInactiveTintColor: "#aaa"
@@ -25,9 +24,9 @@ export default function TechnicianTabLayout() {
       <Tabs.Screen
         name="technician_dashboard"
         options={{
-          title: "Dashboard",
+          title: "Home",
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="grid" color={color} size={size} />
+            <Ionicons name="home" color={color} size={size} />
           )
         }}
       />
