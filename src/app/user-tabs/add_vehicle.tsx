@@ -32,7 +32,10 @@ export default function AddVehicleScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 120 }}
+      >
         {/* Header */}
         <Text style={styles.title}>Add Vehicle</Text>
         <Text style={styles.subtitle}>Register your vehicle details</Text>

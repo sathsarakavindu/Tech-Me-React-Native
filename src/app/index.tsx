@@ -1,24 +1,58 @@
 import { Redirect } from "expo-router";
 import { useEffect, useState } from "react";
-import { StyleSheet, View } from "react-native";
-
+import { ActivityIndicator, StyleSheet, View } from "react-native";
 
 export default function Index() {
-  
-  const[loading, setLoading] = useState(true);
-  const[isLoggedIn, setIsLoggedIn] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [accountType, setAccountType] = useState("");
 
-  useEffect(()=>{
-     const checkAuth = async()=>{
-      
-     }
-  },[]);
+  useEffect(() => {
+    const checkAuth = async () => {
+      // const token = await getAuthToken();
+      // const account = await getAccountType();
+      const account = "User";
+      const token = true;
 
-  return (
-    <View style={styles.container}>
-      <Redirect href={"/auth/login"} />
-    </View>
-  );
+      if (token && account) {
+        setIsLoggedIn(true);
+        setAccountType(account);
+      } else {
+        setIsLoggedIn(false);
+      }
+      setLoading(false);
+    };
+    checkAuth();
+  }, []);
+
+  if (loading) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center"
+        }}
+      >
+        <ActivityIndicator size={"large"} />
+      </View>
+    );
+  }
+
+  if (isLoggedIn && accountType == "Technician") {
+    return (
+      <View style={styles.container}>
+        <Redirect href={"/technician-tabs/technician_dashboard"} />
+      </View>
+    );
+  }
+  if (isLoggedIn && accountType == "User") {
+    return (
+      <View style={styles.container}>
+        <Redirect href={"/user-tabs/dashboard"} />
+      </View>
+    );
+  }
 }
 
 const styles = StyleSheet.create({

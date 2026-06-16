@@ -95,6 +95,7 @@ export default function TechnicianHistory() {
 
   return (
     <SafeAreaView style={styles.container}>
+
       {/* HEADER */}
 
       <View style={styles.header}>
@@ -123,7 +124,7 @@ export default function TechnicianHistory() {
         keyExtractor={(item) => item.id}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
-          paddingBottom: 60
+          paddingBottom: 90
         }}
         renderItem={({ item }) => (
           <TouchableOpacity activeOpacity={0.9}>
