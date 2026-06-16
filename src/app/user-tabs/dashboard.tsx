@@ -17,7 +17,13 @@ export default function DashboardScreen() {
   };
 
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+    <ScrollView
+      style={styles.container}
+      showsVerticalScrollIndicator={false}
+      contentContainerStyle={{
+        paddingBottom: 90
+      }}
+    >
       {/* Header */}
 
       <View style={styles.header}>
@@ -74,6 +80,16 @@ export default function DashboardScreen() {
           <Text style={styles.vehicleName}>Toyota Prius</Text>
 
           <Text style={styles.vehicle_no}>WP CAB 1234</Text>
+        </View>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.vehicleCard}>
+        <Ionicons name="car" size={32} color="#000000" />
+
+        <View>
+          <Text style={styles.vehicleName}>Honda Vezel</Text>
+
+          <Text style={styles.vehicle_no}>WP CAR 9876</Text>
         </View>
       </TouchableOpacity>
 
@@ -196,19 +212,13 @@ const styles = StyleSheet.create({
 
   vehicleCard: {
     marginHorizontal: 20,
-    marginBottom: 15,
-
+    marginBottom: 25,
     backgroundColor: "#fff",
-
     padding: 18,
-
     borderRadius: 18,
-
     flexDirection: "row",
     alignItems: "center",
-
     gap: 15,
-
     elevation: 4
   },
 
