@@ -21,7 +21,7 @@ export default function DashboardScreen() {
       style={styles.container}
       showsVerticalScrollIndicator={false}
       contentContainerStyle={{
-        paddingBottom: 90
+        paddingBottom: 110
       }}
     >
       {/* Header */}

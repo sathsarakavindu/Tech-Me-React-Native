@@ -47,7 +47,7 @@ export default function TechnicianDashboard() {
 
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 10 }}
+        contentContainerStyle={{ paddingBottom: 20 }}
       >
         {/* HEADER */}
 
@@ -91,7 +91,7 @@ export default function TechnicianDashboard() {
         {/* MAP */}
 
         <View style={styles.mapCard}>
-          <Text style={styles.mapTitle}>Live Technician Tracking</Text>
+          <Text style={styles.mapTitle}>Live Tracking</Text>
 
           <MapView
             style={styles.map}
@@ -252,7 +252,8 @@ const styles = StyleSheet.create({
   mapTitle: {
     fontSize: 18,
     fontWeight: "700",
-    marginBottom: 15
+    marginBottom: 15,
+    textAlign: "center"
   },
 
   map: {
