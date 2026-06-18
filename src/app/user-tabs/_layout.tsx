@@ -15,7 +15,7 @@ export default function TabLayout() {
           position: "absolute",
           borderRadius: 20,
           marginHorizontal: 10,
-          marginBottom: 25
+          marginBottom: 55
         },
         tabBarActiveTintColor: "#4C5BFF",
         tabBarInactiveTintColor: "#aaa"
@@ -54,7 +54,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="profile"
         options={{
-          title: "Profile",
+          title: "Account",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="person" size={size} color={color} />
           )
