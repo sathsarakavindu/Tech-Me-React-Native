@@ -10,15 +10,16 @@ import {
   UpdateUser
 } from "../api/domain_endpoints";
 
-export const getUser = async (email: string, password: string) => {
+export const loginUser = async (email: string, password: string) => {
   try {
     const response = await apiClient.post(LoginURL, {
       email,
       password
     });
+
     return response.data;
   } catch (error) {
-    console.log(`Therr is in getUser ${error}`);
+    console.log(`The error is in loginUser ${error}`);
     throw error;
   }
 };

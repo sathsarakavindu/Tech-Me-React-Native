@@ -1,3 +1,7 @@
+import {
+  getAccountType,
+  getAuthToken
+} from "@/features/business/services/async_storage_handling";
 import { Redirect } from "expo-router";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, StyleSheet, View } from "react-native";
@@ -9,10 +13,8 @@ export default function Index() {
 
   useEffect(() => {
     const checkAuth = async () => {
-      // const token = await getAuthToken();
-      // const account = await getAccountType();
-      const account = "User";
-      const token = true;
+      const token = await getAuthToken();
+      const account = await getAccountType();
 
       if (token && account) {
         setIsLoggedIn(true);
@@ -50,6 +52,12 @@ export default function Index() {
     return (
       <View style={styles.container}>
         <Redirect href={"/user-tabs/dashboard"} />
+      </View>
+    );
+  } else {
+    return (
+      <View style={{ flex: 1 }}>
+        <Redirect href={"/auth/login"} />
       </View>
     );
   }

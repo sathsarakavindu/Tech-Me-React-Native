@@ -24,15 +24,15 @@ export const removeName = async () => {
   return await AsyncStorage.removeItem("name");
 };
 
-export const setEmail = async (user_email: string) => {
+export const setUserEmail = async (user_email: string) => {
   return await AsyncStorage.setItem("email", user_email);
 };
 
-export const getEmail = async () => {
+export const getUserEmail = async () => {
   return await AsyncStorage.getItem("email");
 };
 
-export const removeEmail = async () => {
+export const removeUserEmail = async () => {
   return await AsyncStorage.removeItem("email");
 };
 
@@ -70,4 +70,16 @@ export const getNIC = async () => {
 
 export const removeNIC = async () => {
   return await AsyncStorage.removeItem("nic");
+};
+
+export const setAddress = async (address: string) => {
+  return await AsyncStorage.setItem("address", address);
+};
+
+export const getAddress = async () => {
+  return await AsyncStorage.getItem("address");
+};
+
+export const removeAddress = async () => {
+  return await AsyncStorage.removeItem("address");
 };

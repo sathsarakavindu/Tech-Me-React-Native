@@ -1,7 +1,17 @@
+import { loginUser } from "@/features/auth/services/auth_service";
+import {
+  setAccountType,
+  setAddress,
+  setAuthToken,
+  setContactNo,
+  setNIC,
+  setUserEmail
+} from "@/features/business/services/async_storage_handling";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
+  ActivityIndicator,
   Alert,
   Image,
   ScrollView,
@@ -14,15 +24,36 @@ import {
 
 export default function LoginPage() {
   const router = useRouter();
-
+  const [isLoading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [hidePassword, setHidePassword] = useState(true);
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (!email || !password) {
-      Alert.alert("Error", "Please enter email and password");
+      Alert.alert("Validation", "Please enter email and password");
       return;
+    }
+
+    try {
+      setLoading(true);
+      const response = await loginUser(email, password);
+
+      console.log(response);
+
+      await setAuthToken(response.token);
+      await setUserEmail(response.email);
+      await setAccountType(response.account_type);
+      await setContactNo(response.contact_no);
+      await setNIC(response.nic);
+      await setAddress(response.address);
+
+      router.replace("/user-tabs/dashboard");
+    } catch (error: any) {
+      console.log(error);
+      Alert.alert("Login Failed", "Invalid email or password");
+    } finally {
+      setLoading(false);
     }
 
     // TODO: call API / backend login
@@ -78,8 +109,16 @@ export default function LoginPage() {
           </View>
 
           {/* Login Button */}
-          <TouchableOpacity style={styles.button} onPress={handleLogin}>
-            <Text style={styles.buttonText}>Sign In</Text>
+          <TouchableOpacity
+            style={styles.button}
+            disabled={isLoading}
+            onPress={handleLogin}
+          >
+            {isLoading ? (
+              <ActivityIndicator />
+            ) : (
+              <Text style={styles.buttonText}>Sign In</Text>
+            )}
           </TouchableOpacity>
 
           {/* Links */}
