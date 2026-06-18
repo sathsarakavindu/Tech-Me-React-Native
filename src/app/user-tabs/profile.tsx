@@ -2,13 +2,14 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import {
-    Dimensions,
-    Image,
-    SafeAreaView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View
+  Alert,
+  Dimensions,
+  Image,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View
 } from "react-native";
 import AccountOptionsCard from "../../components/account_option_card";
 
@@ -33,8 +34,27 @@ export default function UserAccountPage() {
   };
 
   const signOut = async () => {
-    await AsyncStorage.clear();
-    // router.replace("/login");
+    Alert.alert(
+      "Logout",
+      "Do you want to logout?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel"
+        },
+        {
+          text: "Logout",
+          style: "destructive",
+          onPress: async () => {
+            await AsyncStorage.clear();
+            router.replace("/auth/login");
+          }
+        }
+      ],
+      {
+        cancelable: true
+      }
+    );
   };
 
   return (
