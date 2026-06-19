@@ -1,5 +1,6 @@
 import { loginUser } from "@/features/auth/services/auth_service";
 import {
+  getAccountType,
   setAccountType,
   setAddress,
   setAuthToken,
@@ -29,6 +30,11 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [hidePassword, setHidePassword] = useState(true);
 
+  const isUser = async () => {
+    const accountHolderType = await getAccountType();
+    return accountHolderType == "User";
+  };
+
   const handleLogin = async () => {
     if (!email || !password) {
       Alert.alert("Validation", "Please enter email and password");
@@ -48,7 +54,11 @@ export default function LoginPage() {
       await setNIC(response.nic);
       await setAddress(response.address);
 
-      router.replace("/user-tabs/dashboard");
+      if (await isUser()) {
+        router.replace("/user-tabs/dashboard");
+      } else {
+        router.replace("/technician-tabs/technician_dashboard");
+      }
     } catch (error: any) {
       console.log(error);
       Alert.alert("Login Failed", "Invalid email or password");

@@ -10,6 +10,8 @@ import {
   UpdateUser
 } from "../api/domain_endpoints";
 
+import { User } from "@/models/user_model";
+
 export const loginUser = async (email: string, password: string) => {
   try {
     const response = await apiClient.post(LoginURL, {
@@ -24,9 +26,9 @@ export const loginUser = async (email: string, password: string) => {
   }
 };
 
-export const createUser = async () => {
+export const createUser = async (user: User) => {
   try {
-    const response = await apiClient.post(RegisterURL, {});
+    const response = await apiClient.post(RegisterURL, user);
     return response.data;
   } catch (error) {
     console.log(`The error is in createUser ${error}`);

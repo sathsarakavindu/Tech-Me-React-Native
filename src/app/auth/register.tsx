@@ -1,7 +1,10 @@
+import { createUser } from "@/features/auth/services/auth_service";
+import { User } from "@/models/user_model";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
+  Alert,
   KeyboardAvoidingView,
   Modal,
   Platform,
@@ -30,15 +33,102 @@ export default function RegisterPage() {
 
   const [hidePassword, setHidePassword] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const accountTypes = ["User", "Technician"];
 
-  const setField = (key: string, value: string) => {
-    setForm({ ...form, [key]: value });
+  type FormType = {
+    name: string;
+    email: string;
+    password: string;
+    confirmPassword: string;
+    contact: string;
+    nic: string;
+    address: string;
+    accountType: string;
+  };
+  const setField = (key: keyof FormType, value: string) => {
+    setForm((prev) => ({
+      ...prev,
+      [key]: value
+    }));
+  };
+
+  const validateEmail = (email: string) => {
+    const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regexEmail.test(email);
+  };
+
+  const validateContactNo = (contactNo: string) => {
+    const contactNoRegex = /^(07[0-9]{8}|94[0-9]{9})$/;
+    return contactNoRegex.test(contactNo);
+  };
+
+  const validateForm = () => {
+    let newErrors: Record<string, string> = {};
+
+    if (!form.name.trim()) newErrors.name = "Name is required";
+
+    if (!form.email.trim()) newErrors.email = "Email is required";
+    else if (!validateEmail(form.email)) newErrors.email = "Invalid Email";
+
+    if (!form.password.trim()) newErrors.password = "Password is required";
+    if (!form.confirmPassword.trim())
+      newErrors.confirmPassword = "Confirm Password is required";
+
+    if (
+      form.password &&
+      form.confirmPassword &&
+      form.password !== form.confirmPassword
+    ) {
+      newErrors.confirmPassword = "Passwords do not match";
+    }
+
+    if (!form.contact.trim()) newErrors.contact = "Contact number is required";
+    else if (!validateContactNo(form.contact))
+      newErrors.contact = "Invalid contact number";
+
+    if (!form.nic.trim()) newErrors.nic = "NIC is required";
+
+    if (!form.address.trim()) newErrors.address = "Address is required";
+
+    if (!form.accountType) newErrors.accountType = "Account type is required";
+
+    setErrors(newErrors);
+
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleRegistration = async () => {
-    console.log(form);
+    if (!validateForm()) {
+      return;
+    }
+
+    try {
+      const user: User = {
+        name: form.name,
+        email: form.email,
+        password: form.password,
+        contact_no: form.contact,
+        nic: form.nic,
+        address: form.address,
+        account_type: form.accountType
+      };
+      console.log(user);
+      const response = await createUser(user);
+
+      if (response) {
+        console.log(response);
+
+        router.back();
+      }
+    } catch (error: any) {
+      Alert.alert(
+        "Error",
+        error?.response?.data?.message || "Registration failed"
+      );
+      console.log(error);
+    }
   };
 
   return (
@@ -61,7 +151,7 @@ export default function RegisterPage() {
         {/* CARD */}
         <View style={styles.card}>
           {/* NAME */}
-          <View style={styles.inputBox}>
+          <View style={[styles.inputBox, errors.name && styles.errorBorder]}>
             <Ionicons name="person-outline" size={20} />
             <TextInput
               placeholder="Full Name"
@@ -71,8 +161,10 @@ export default function RegisterPage() {
             />
           </View>
 
+          {errors.name && <Text style={styles.errorText}>{errors.name}</Text>}
+
           {/* EMAIL */}
-          <View style={styles.inputBox}>
+          <View style={[styles.inputBox, errors.email && styles.errorBorder]}>
             <Ionicons name="mail-outline" size={20} />
             <TextInput
               placeholder="Email"
@@ -83,8 +175,12 @@ export default function RegisterPage() {
             />
           </View>
 
+          {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
+
           {/* PASSWORD */}
-          <View style={styles.inputBox}>
+          <View
+            style={[styles.inputBox, errors.password && styles.errorBorder]}
+          >
             <Ionicons name="lock-closed-outline" size={20} />
             <TextInput
               placeholder="Password"
@@ -102,8 +198,17 @@ export default function RegisterPage() {
             </TouchableOpacity>
           </View>
 
+          {errors.password && (
+            <Text style={styles.errorText}>{errors.password}</Text>
+          )}
+
           {/* CONFIRM PASSWORD */}
-          <View style={styles.inputBox}>
+          <View
+            style={[
+              styles.inputBox,
+              errors.confirmPassword && styles.errorBorder
+            ]}
+          >
             <Ionicons name="shield-checkmark-outline" size={20} />
             <TextInput
               placeholder="Confirm Password"
@@ -114,8 +219,12 @@ export default function RegisterPage() {
             />
           </View>
 
+          {errors.confirmPassword && (
+            <Text style={styles.errorText}>{errors.confirmPassword}</Text>
+          )}
+
           {/* CONTACT */}
-          <View style={styles.inputBox}>
+          <View style={[styles.inputBox, errors.contact && styles.errorBorder]}>
             <Ionicons name="call-outline" size={20} />
             <TextInput
               placeholder="Contact Number"
@@ -126,8 +235,12 @@ export default function RegisterPage() {
             />
           </View>
 
+          {errors.contact && (
+            <Text style={styles.errorText}>{errors.contact}</Text>
+          )}
+
           {/* NIC */}
-          <View style={styles.inputBox}>
+          <View style={[styles.inputBox, errors.nic && styles.errorBorder]}>
             <Ionicons name="card-outline" size={20} />
             <TextInput
               placeholder="NIC"
@@ -137,8 +250,10 @@ export default function RegisterPage() {
             />
           </View>
 
+          {errors.nic && <Text style={styles.errorText}>{errors.nic}</Text>}
+
           {/* ADDRESS */}
-          <View style={styles.inputBox}>
+          <View style={[styles.inputBox, errors.address && styles.errorBorder]}>
             <Ionicons name="home-outline" size={20} />
             <TextInput
               placeholder="Address"
@@ -148,9 +263,13 @@ export default function RegisterPage() {
             />
           </View>
 
+          {errors.address && (
+            <Text style={styles.errorText}>{errors.address}</Text>
+          )}
+
           {/* ACCOUNT TYPE (MODAL DROPDOWN) */}
           <TouchableOpacity
-            style={styles.dropdown}
+            style={[styles.dropdown, errors.accountType && styles.errorBorder]}
             onPress={() => setModalVisible(true)}
           >
             <Ionicons name="people-outline" size={20} />
@@ -159,6 +278,10 @@ export default function RegisterPage() {
             </Text>
             <Ionicons name="chevron-down" size={20} />
           </TouchableOpacity>
+
+          {errors.accountType && (
+            <Text style={styles.errorText}>{errors.accountType}</Text>
+          )}
 
           {/* REGISTER BUTTON */}
           <TouchableOpacity
@@ -244,7 +367,22 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     paddingHorizontal: 12,
     marginBottom: 12,
-    height: 52
+    height: 52,
+    borderWidth: 1,
+    borderColor: "transparent"
+  },
+
+  errorBorder: {
+    borderColor: "#FF3B30",
+    borderWidth: 1.5
+  },
+  errorText: {
+    color: "#FF3B30",
+    fontSize: 12,
+    marginTop: -8,
+    marginBottom: 8,
+    marginLeft: 5,
+    fontFamily: "appFont"
   },
 
   input: {
