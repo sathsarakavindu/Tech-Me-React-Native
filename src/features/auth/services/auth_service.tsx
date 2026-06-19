@@ -84,7 +84,7 @@ export const forgotPasswordUpdate = async (
   otp: string
 ) => {
   try {
-    const response = await apiClient.post(ForgotPasswordUpdate, {
+    const response = await apiClient.put(ForgotPasswordUpdate, {
       new_password,
       otp
     });

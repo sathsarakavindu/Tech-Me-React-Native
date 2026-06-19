@@ -1,3 +1,5 @@
+import { forgotPasswordUpdate } from "@/features/auth/services/auth_service";
+import { getOTP } from "@/features/business/services/async_storage_handling";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useState } from "react";
@@ -24,7 +26,7 @@ export default function NewPasswordPage() {
   const [hide2, setHide2] = useState(true);
   const [loading, setLoading] = useState(false);
 
-  const handleChangePassword = () => {
+  const handleChangePassword = async () => {
     if (!form.password || !form.confirmPassword) {
       Alert.alert("Error", "Please fill all fields");
       return;
@@ -41,15 +43,31 @@ export default function NewPasswordPage() {
     }
 
     setLoading(true);
+    console.log("Hi");
+    try {
+      const otp_code = await getOTP();
+      console.log(`OTP is ${otp_code}`);
+      if (otp_code) {
+        const response = await forgotPasswordUpdate(form.password, otp_code);
+
+        if (response) {
+          setLoading(false);
+          router.replace("/auth/login");
+        } else {
+          setLoading(false);
+        }
+      }
+    } catch (error) {
+      console.log(`Error: ${error}`);
+    }
 
     // simulate API call
-    setTimeout(() => {
-      setLoading(false);
+    // setTimeout(() => {
+    //   setLoading(false);
 
-      Alert.alert("Success", "Password updated successfully");
+    //   Alert.alert("Success", "Password updated successfully");
 
-      router.replace("/auth/login");
-    }, 1200);
+    // }, 1200);
   };
 
   return (

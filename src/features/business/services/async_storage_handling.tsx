@@ -83,3 +83,15 @@ export const getAddress = async () => {
 export const removeAddress = async () => {
   return await AsyncStorage.removeItem("address");
 };
+
+export const setOTP = async (otp_code: string) => {
+  return await AsyncStorage.setItem("otp", otp_code);
+};
+
+export const getOTP = async () => {
+  return await AsyncStorage.getItem("otp");
+};
+
+export const removeOTP = async () => {
+  return await AsyncStorage.removeItem("otp");
+};
