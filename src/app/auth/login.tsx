@@ -5,6 +5,7 @@ import {
   setAddress,
   setAuthToken,
   setContactNo,
+  setName,
   setNIC,
   setUserEmail
 } from "@/features/business/services/async_storage_handling";
@@ -46,7 +47,7 @@ export default function LoginPage() {
       const response = await loginUser(email, password);
 
       console.log(response);
-
+      await setName(response.name);
       await setAuthToken(response.token);
       await setUserEmail(response.email);
       await setAccountType(response.account_type);

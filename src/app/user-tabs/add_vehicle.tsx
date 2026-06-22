@@ -3,6 +3,7 @@ import * as ImagePicker from "expo-image-picker";
 import { useState } from "react";
 import {
   Image,
+  Modal,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -13,21 +14,58 @@ import {
 } from "react-native";
 
 export default function AddVehicleScreen() {
+  const [modalVisible, setModalVisible] = useState(false);
   const [image, setImage] = useState<string | null>(null);
   const [vehicleNo, setVehicleNo] = useState("");
   const [model, setModel] = useState("");
   const [type, setType] = useState("Car");
   const [color, setColor] = useState("");
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const vehicleTypes = ["Car", "Van", "Three Wheeler", "Bike", "Lorry", "Bus"];
 
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      quality: 0.8
+      quality: 0.9
     });
 
     if (!result.canceled) {
       setImage(result.assets[0].uri);
+
+      //Clear Image Error message
+      setErrors((prev) => ({
+        ...prev,
+        imageError: ""
+      }));
     }
+  };
+
+  const handlingAddVehicle = async () => {
+    if (!validateFields()) {
+      return;
+    }
+    console.log(image);
+    console.log(vehicleNo);
+    console.log(model);
+    console.log(type);
+    console.log(color);
+  };
+
+  const validateFields = () => {
+    let newErrors: Record<string, string> = {};
+
+    if (!image) newErrors.imageError = "Vehicle Image is Required";
+
+    if (!vehicleNo) newErrors.vehicleNoError = "Vehicle No is Required";
+
+    if (!model) newErrors.vehicleModalError = "Model is Required";
+
+    if (!type) newErrors.typeError = "Type is Required";
+    if (!color) newErrors.colorError = "Color is Required";
+    setErrors(newErrors);
+
+    return Object.keys(newErrors).length === 0;
   };
 
   return (
@@ -50,11 +88,19 @@ export default function AddVehicleScreen() {
               <Text style={styles.uploadText}>Upload Vehicle Image</Text>
             </View>
           )}
+          {errors.imageError && (
+            <Text style={styles.errorTextImage}>{errors.imageError}</Text>
+          )}
         </TouchableOpacity>
 
         {/* Input Fields */}
         <View style={styles.card}>
-          <View style={styles.inputBox}>
+          <View
+            style={[
+              styles.inputBox,
+              errors.vehicleNoError && styles.errorBorder
+            ]}
+          >
             <Ionicons name="car-outline" size={20} color="#000000" />
             <TextInput
               placeholder="Vehicle Number (EX: WP-CAD-5617)"
@@ -64,8 +110,16 @@ export default function AddVehicleScreen() {
               onChangeText={setVehicleNo}
             />
           </View>
+          {errors.vehicleNoError && (
+            <Text style={styles.errorText}>{errors.vehicleNoError}</Text>
+          )}
 
-          <View style={styles.inputBox}>
+          <View
+            style={[
+              styles.inputBox,
+              errors.vehicleModalError && styles.errorBorder
+            ]}
+          >
             <Ionicons name="construct-outline" size={20} color="#000000" />
             <TextInput
               placeholder="Model (EX: Suzuki Alto 2017)"
@@ -76,7 +130,13 @@ export default function AddVehicleScreen() {
             />
           </View>
 
-          <View style={styles.inputBox}>
+          {errors.vehicleModalError && (
+            <Text style={styles.errorText}>{errors.vehicleModalError}</Text>
+          )}
+
+          <View
+            style={[styles.inputBox, errors.colorError && styles.errorBorder]}
+          >
             <Ionicons name="color-palette-outline" size={20} color="#000000" />
             <TextInput
               placeholder="Color"
@@ -86,17 +146,52 @@ export default function AddVehicleScreen() {
               onChangeText={setColor}
             />
           </View>
-
+          {errors.colorError && (
+            <Text style={styles.errorText}>{errors.colorError}</Text>
+          )}
           {/* Dropdown (UI only) */}
-          <TouchableOpacity style={styles.dropdown}>
+          <TouchableOpacity
+            style={styles.dropdown}
+            onPress={() => setModalVisible(true)}
+          >
             <Ionicons name="list-outline" size={20} color="#000000" />
-            <Text style={styles.dropdownText}>{type}</Text>
+
+            <Text style={styles.dropdownText}>
+              {type || "Select Vehicle Type"}
+            </Text>
+
             <Ionicons name="chevron-down" size={20} color="#000000" />
           </TouchableOpacity>
+
+          <Modal transparent visible={modalVisible} animationType="fade">
+            <TouchableOpacity
+              style={styles.modalOverlay}
+              activeOpacity={1}
+              onPress={() => setModalVisible(false)}
+            >
+              <View style={styles.modalContainer}>
+                {vehicleTypes.map((item) => (
+                  <TouchableOpacity
+                    key={item}
+                    style={styles.modalItem}
+                    onPress={() => {
+                      setType(item);
+                      setModalVisible(false);
+                    }}
+                  >
+                    <Text style={styles.modalText}>{item}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </TouchableOpacity>
+          </Modal>
         </View>
 
         {/* Button */}
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => handlingAddVehicle()}
+        >
           <Text style={styles.buttonText}>Add Vehicle</Text>
         </TouchableOpacity>
       </ScrollView>
@@ -110,7 +205,21 @@ const styles = StyleSheet.create({
     backgroundColor: "#000b58",
     paddingHorizontal: 16
   },
-
+  errorText: {
+    fontSize: 12,
+    fontFamily: "appFont",
+    color: "#FF3B30",
+    marginBottom: 6,
+    marginLeft: 2,
+    marginTop: -10
+  },
+  errorTextImage: {
+    fontSize: 12,
+    fontFamily: "appFont",
+    color: "#FF3B30",
+    marginTop: 1
+  },
+  errorBorder: { borderColor: "#FF3B30", borderWidth: 1.5, marginBottom: 12 },
   title: {
     fontSize: 28,
     fontWeight: "bold",
@@ -206,5 +315,30 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
     fontFamily: "appFontBold"
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.4)",
+    justifyContent: "center",
+    paddingHorizontal: 20
+  },
+
+  modalContainer: {
+    backgroundColor: "#fff",
+    borderRadius: 16,
+    overflow: "hidden"
+  },
+
+  modalItem: {
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: "#eee"
+  },
+
+  modalText: {
+    fontSize: 16,
+    color: "#000",
+    fontFamily: "appFont"
   }
 });

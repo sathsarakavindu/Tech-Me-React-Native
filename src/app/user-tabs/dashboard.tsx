@@ -6,14 +6,48 @@ import {
   View
 } from "react-native";
 
+import { getName } from "@/features/business/services/async_storage_handling";
 import { Ionicons } from "@expo/vector-icons";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function DashboardScreen() {
   const [getRequestHelp, setRequestHelp] = useState(false);
+  const [user_name, setUserName] = useState("");
+  const [greeting, setGreeting] = useState("");
 
-  const handleReqHelp = () => {
+  useEffect(() => {
+    getGreeting();
+    userNameGet();
+  }, []);
+
+  const handleReqHelp = async () => {
     setRequestHelp(!getRequestHelp);
+  };
+
+  const userNameGet = async () => {
+    const username = await getName();
+    if (username) {
+      setUserName(username);
+    } else {
+      setUserName("");
+    }
+  };
+
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour >= 4 && hour < 12) {
+      setGreeting("Good Morning");
+      return "Good Morning!";
+    } else if (hour >= 12 && hour <= 15) {
+      setGreeting("Good Afternoon");
+      return "Good Afternoon!";
+    } else if (hour > 15 && hour <= 23) {
+      setGreeting("Good Evening");
+      return "Good Evening!";
+    } else {
+      setGreeting("Good Night");
+      return "Good Night!";
+    }
   };
 
   return (
@@ -28,9 +62,11 @@ export default function DashboardScreen() {
 
       <View style={styles.header}>
         <View>
-          <Text style={styles.greeting}>Good Morning 👋</Text>
+          <Text style={styles.greeting}>
+            {greeting ? greeting : "Have a Good Day..!"} 👋
+          </Text>
 
-          <Text style={styles.name}>Kavindu Sathsara</Text>
+          <Text style={styles.name}>{user_name ? user_name : "Welcome!"}</Text>
         </View>
 
         <TouchableOpacity>
