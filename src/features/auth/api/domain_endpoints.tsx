@@ -15,6 +15,7 @@ export const AddVehicleURL = "/api/vehicle/add-vehicle/";
 export const GetVehicleURL = "/api/vehicle/get-vehicle/";
 export const EditVehicleURL = "/api/vehicle/edit-vehicle/";
 export const DeleteVehicleURL = "/api/vehicle/delete-vehicle/";
+export const IsAvailableThisVehicle = "/api/vehicle/is-vehicle-available/";
 
 //Help APIs
 export const MakeHelp = "/api/users/help/make-help/";
