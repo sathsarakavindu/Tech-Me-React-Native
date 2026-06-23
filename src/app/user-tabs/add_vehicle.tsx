@@ -1,7 +1,16 @@
+import { addVehicle } from "@/features/auth/services/add_vehicle_services";
+import {
+  getContactNo,
+  getName,
+  getNIC,
+  getUserEmail
+} from "@/features/business/services/async_storage_handling";
+import { uploadVehicleImage } from "@/features/business/services/supabase_service";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { useState } from "react";
 import {
+  Alert,
   Image,
   Modal,
   SafeAreaView,
@@ -26,7 +35,7 @@ export default function AddVehicleScreen() {
 
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ["images"], //ImagePicker.MediaTypeOptions.Images,
       quality: 0.9
     });
 
@@ -45,11 +54,34 @@ export default function AddVehicleScreen() {
     if (!validateFields()) {
       return;
     }
-    console.log(image);
-    console.log(vehicleNo);
-    console.log(model);
-    console.log(type);
-    console.log(color);
+
+    try {
+      const imageURL = await uploadVehicleImage(image!);
+
+      console.log("Image URL: ", imageURL);
+
+      const user_name = await getName();
+      const user_email = await getUserEmail();
+      const user_mobile = await getContactNo();
+      const nic = await getNIC();
+
+      if (user_name && user_email && user_mobile && nic) {
+        const response = await addVehicle(
+          user_name,
+          user_email,
+          user_mobile,
+          nic,
+          imageURL,
+          vehicleNo,
+          type,
+          model,
+          color
+        );
+        Alert.alert("Vehicle", "Your vehicle successfully added!", [{}], {
+          cancelable: true
+        });
+      }
+    } catch (error) {}
   };
 
   const validateFields = () => {
