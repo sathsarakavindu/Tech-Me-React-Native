@@ -1,3 +1,4 @@
+import { Vehicle } from "@/models/vehicle_model";
 import apiClient from "../api/apiClient";
 import {
   AddVehicleURL,
@@ -37,7 +38,7 @@ export const addVehicle = async (
   }
 };
 
-const getVehicles = async (nic: string) => {
+export const getVehicles = async (nic: string): Promise<Vehicle[]> => {
   try {
     const response = await apiClient.get(GetVehicleURL, {
       params: {
@@ -45,10 +46,10 @@ const getVehicles = async (nic: string) => {
       }
     });
 
-    if (response) {
-    }
+    return response.data.result ?? [];
   } catch (error) {
     console.log(`The error is in getVehicles: ${error}`);
+    return [];
   }
 };
 
@@ -76,11 +77,20 @@ const updateVehicle = async (
   }
 };
 
-const deleteVehicle = async (nic: string, vehicle_no: string) => {
+export const deleteVehicle = async (vehicleNo: string) => {
   try {
-    const response = await apiClient.delete(DeleteVehicleURL, {});
+    const response = await apiClient.delete(DeleteVehicleURL, {
+      params: {
+        vehicle_no: vehicleNo
+      }
+    });
+
+    if (response.status == 200) {
+      return true;
+    } else return false;
   } catch (error) {
     console.log(`The error is in deleteVehicle: ${error}`);
+    return false;
   }
 };
 
