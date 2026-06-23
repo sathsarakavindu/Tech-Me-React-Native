@@ -1,9 +1,10 @@
 import apiClient from "../api/apiClient";
 import {
-    AddVehicleURL,
-    DeleteVehicleURL,
-    EditVehicleURL,
-    GetVehicleURL
+  AddVehicleURL,
+  DeleteVehicleURL,
+  EditVehicleURL,
+  GetVehicleURL,
+  IsAvailableThisVehicle
 } from "../api/domain_endpoints";
 
 export const addVehicle = async (
@@ -81,4 +82,20 @@ const deleteVehicle = async (nic: string, vehicle_no: string) => {
   } catch (error) {
     console.log(`The error is in deleteVehicle: ${error}`);
   }
+};
+
+export const isAvailableThisVehicle = async (vehicle_no: string) => {
+  try {
+    const response = await apiClient.get(IsAvailableThisVehicle, {
+      params: { vehicle_no: vehicle_no }
+    });
+    const message = response.data.message;
+    if (message) {
+      console.log(`Available`);
+      return true;
+    } else {
+      console.log("Not available");
+      return false;
+    }
+  } catch (error) {}
 };
