@@ -1,3 +1,4 @@
+import { sendOTPToUser } from "@/features/auth/services/auth_service";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useState } from "react";
@@ -17,9 +18,11 @@ export default function ForgotPasswordPage() {
 
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleContinue = () => {
+  const handleContinue = async () => {
     if (!email) {
+      setError("Email is required");
       Alert.alert("Error", "Email is required");
       return;
     }
@@ -33,11 +36,20 @@ export default function ForgotPasswordPage() {
 
     setLoading(true);
 
-    // simulate API call
-    setTimeout(() => {
+    try {
+      const response = await sendOTPToUser(email);
+      console.log(response);
+
+      if (response) {
+        setError("");
+        setLoading(false);
+        router.push("/auth/otp_page");
+      }
+    } catch (error) {
+      setError("Invalid Email");
       setLoading(false);
-      //   router.push("/auth/otp");
-    }, 1000);
+      console.log(`Error: ${error}`);
+    }
   };
 
   return (
@@ -57,7 +69,7 @@ export default function ForgotPasswordPage() {
       {/* CARD */}
       <View style={styles.card}>
         {/* EMAIL INPUT */}
-        <View style={styles.inputBox}>
+        <View style={[styles.inputBox, error && styles.errorBorder]}>
           <Ionicons name="mail-outline" size={20} />
           <TextInput
             placeholder="Enter your email"
@@ -69,8 +81,14 @@ export default function ForgotPasswordPage() {
           />
         </View>
 
+        {error && <Text style={styles.errorText}>{error}</Text>}
+
         {/* CONTINUE BUTTON */}
-        <TouchableOpacity style={styles.button} onPress={handleContinue}>
+        <TouchableOpacity
+          style={styles.button}
+          disabled={loading}
+          onPress={handleContinue}
+        >
           <Text style={styles.buttonText}>
             {loading ? "Sending..." : "Continue"}
           </Text>
@@ -115,6 +133,19 @@ const styles = StyleSheet.create({
     marginTop: 10,
     fontSize: 14,
     fontFamily: "appFont"
+  },
+
+  errorBorder: {
+    borderColor: "#FF3B30",
+    borderWidth: 1.5
+  },
+
+  errorText: {
+    color: "#FF3B30",
+    fontFamily: "appFont",
+    fontSize: 12,
+    marginTop: 2,
+    marginLeft: 5
   },
 
   card: {

@@ -2,6 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import {
+  Alert,
   Dimensions,
   Image,
   SafeAreaView,
@@ -32,8 +33,27 @@ export default function UserAccountPage() {
   };
 
   const signOut = async () => {
-    await AsyncStorage.clear();
-    // router.replace("/login");
+    Alert.alert(
+      "Logout",
+      "Do you want to logout?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel"
+        },
+        {
+          text: "Yes",
+          style: "destructive",
+          onPress: async () => {
+            await AsyncStorage.clear();
+            router.replace("/auth/login");
+          }
+        }
+      ],
+      {
+        cancelable: true
+      }
+    );
   };
 
   return (

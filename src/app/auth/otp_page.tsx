@@ -1,3 +1,5 @@
+import { checkOTPValidation } from "@/features/auth/services/auth_service";
+import { setOTP } from "@/features/business/services/async_storage_handling";
 import { useRouter } from "expo-router";
 import { useRef, useState } from "react";
 import {
@@ -12,10 +14,12 @@ import {
 export default function OtpPage() {
   const router = useRouter();
 
-  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
+  const [otp, setOtp] = useState(["", "", "", ""]);
   const inputs = useRef<TextInput[]>([]);
 
-  const [timer, setTimer] = useState(30);
+  const [timer, setTimer] = useState(60);
+  const [isLoading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleChange = (text: string, index: number) => {
     if (!/^\d*$/.test(text)) return;
@@ -35,19 +39,36 @@ export default function OtpPage() {
     }
   };
 
-  const verifyOtp = () => {
+  const verifyOtp = async () => {
+    setLoading(true);
     const code = otp.join("");
 
-    if (code.length < 6) {
+    if (code.length < 4) {
       Alert.alert("Error", "Please enter full OTP");
+      setLoading(false);
+      setError("Please enter full OTP");
       return;
     }
+    try {
+      console.log("OTP:", code);
+      const checkOTP = await checkOTPValidation(code);
 
-    console.log("OTP:", code);
-
-    // navigate to reset password
-    //router.push("/auth/new-password");
+      if (checkOTP) {
+        setOTP(code);
+        setError("");
+        setLoading(false);
+        router.push("/auth/create_new_password_page");
+      } else {
+        setError("Invalid OTP");
+        setLoading(false);
+      }
+    } catch (error) {
+      setError("Invalid OTP");
+      setLoading(false);
+    }
   };
+
+  const resendHandling = async () => {};
 
   return (
     <View style={styles.container}>
@@ -69,7 +90,7 @@ export default function OtpPage() {
               ref={(ref) => {
                 if (ref) inputs.current[index] = ref;
               }}
-              style={styles.otpBox}
+              style={[styles.otpBox, error && styles.errorBorder]}
               keyboardType="numeric"
               maxLength={1}
               value={digit}
@@ -82,6 +103,7 @@ export default function OtpPage() {
             />
           ))}
         </View>
+        {error && <Text style={styles.errorText}>{error}</Text>}
 
         {/* RESEND */}
         <Text style={styles.resendText}>
@@ -116,6 +138,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20
   },
 
+  errorBorder: {
+    borderWidth: 1,
+    borderColor: "#FF3B30"
+  },
+
+  errorText: {
+    color: "#FF3B30",
+    fontFamily: "appFont",
+    fontSize: 12,
+    marginTop: 15,
+    textAlign: "center"
+  },
+
   title: {
     fontSize: 26,
     fontWeight: "700",
@@ -141,7 +176,7 @@ const styles = StyleSheet.create({
 
   otpContainer: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "space-evenly",
     width: "100%",
     marginTop: 40
   },
@@ -159,12 +194,13 @@ const styles = StyleSheet.create({
   },
 
   resendText: {
-    marginTop: 25,
+    marginTop: 15,
     color: "#666",
     fontFamily: "appFont"
   },
 
   resendAction: {
+    marginTop: 10,
     color: "#0B0F2F",
     fontWeight: "700",
     fontFamily: "appFontBold"
@@ -175,7 +211,7 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 12,
     width: "100%",
-    marginTop: 30,
+    marginTop: 15,
     alignItems: "center"
   },
 
@@ -187,7 +223,7 @@ const styles = StyleSheet.create({
   },
 
   backText: {
-    marginTop: 20,
+    marginTop: 15,
     color: "#000000",
     fontWeight: "600",
     fontFamily: "appFont"
