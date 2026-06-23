@@ -1,4 +1,4 @@
-export const domain = "https://techmebackend-production.up.railway.app";
+export const domain = "http://192.168.8.125:5000"; //"https://techmebackend-production.up.railway.app";
 
 // User Authentication APIs
 export const LoginURL = "/api/users/signin/";

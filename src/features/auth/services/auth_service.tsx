@@ -10,22 +10,25 @@ import {
   UpdateUser
 } from "../api/domain_endpoints";
 
-export const getUser = async (email: string, password: string) => {
+import { User } from "@/models/user_model";
+
+export const loginUser = async (email: string, password: string) => {
   try {
     const response = await apiClient.post(LoginURL, {
       email,
       password
     });
+
     return response.data;
   } catch (error) {
-    console.log(`Therr is in getUser ${error}`);
+    console.log(`The error is in loginUser ${error}`);
     throw error;
   }
 };
 
-export const createUser = async () => {
+export const createUser = async (user: User) => {
   try {
-    const response = await apiClient.post(RegisterURL, {});
+    const response = await apiClient.post(RegisterURL, user);
     return response.data;
   } catch (error) {
     console.log(`The error is in createUser ${error}`);
@@ -81,7 +84,7 @@ export const forgotPasswordUpdate = async (
   otp: string
 ) => {
   try {
-    const response = await apiClient.post(ForgotPasswordUpdate, {
+    const response = await apiClient.put(ForgotPasswordUpdate, {
       new_password,
       otp
     });
