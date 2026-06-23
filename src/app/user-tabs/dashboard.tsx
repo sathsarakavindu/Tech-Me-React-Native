@@ -1,4 +1,6 @@
 import {
+  Alert,
+  FlatList,
   ScrollView,
   StyleSheet,
   Text,
@@ -6,7 +8,16 @@ import {
   View
 } from "react-native";
 
-import { getName } from "@/features/business/services/async_storage_handling";
+import VehicleCard from "@/components/vehicle_card";
+import {
+  deleteVehicle,
+  getVehicles
+} from "@/features/auth/services/add_vehicle_services";
+import {
+  getName,
+  getNIC
+} from "@/features/business/services/async_storage_handling";
+import { Vehicle } from "@/models/vehicle_model";
 import { Ionicons } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
 
@@ -14,11 +25,65 @@ export default function DashboardScreen() {
   const [getRequestHelp, setRequestHelp] = useState(false);
   const [user_name, setUserName] = useState("");
   const [greeting, setGreeting] = useState("");
+  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
+  const [loadingVehicles, setLoadingVehicles] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     getGreeting();
     userNameGet();
+    getUserVehicles();
   }, []);
+
+  const getUserVehicles = async () => {
+    try {
+      setLoadingVehicles(true);
+      const nic_ = await getNIC();
+      if (!nic_) {
+        setVehicles([]);
+        return;
+      }
+      const result = await getVehicles(nic_);
+      setVehicles(result);
+    } catch (error) {
+      console.log(`Dashboard vehicle loading error: ${error}`);
+    } finally {
+      setLoadingVehicles(false);
+    }
+  };
+
+  const onPressDeleteVehicle = async (vehicle_no: string) => {
+    Alert.alert(
+      "Delete Vehicle",
+      "Do you want to delete this vehicle?",
+      [
+        {
+          text: "No",
+          style: "cancel"
+        },
+        {
+          text: "Yes",
+          style: "destructive",
+          onPress: () => {
+            handlingVehicleDeletion(vehicle_no);
+          }
+        }
+      ],
+      { cancelable: true }
+    );
+  };
+
+  const handlingVehicleDeletion = async (vehicle_no: string) => {
+    try {
+      const response = await deleteVehicle(vehicle_no);
+      if (response)
+        setVehicles((previous) =>
+          previous.filter((vehicle) => vehicle.vehicle_no !== vehicle_no)
+        );
+    } catch (error) {
+      console.log(`Vehicle deletion error: ${error}`);
+    }
+  };
 
   const handleReqHelp = async () => {
     setRequestHelp(!getRequestHelp);
@@ -47,6 +112,17 @@ export default function DashboardScreen() {
     } else {
       setGreeting("Good Night");
       return "Good Night!";
+    }
+  };
+
+  const refreshVehicles = async () => {
+    try {
+      setRefreshing(true);
+      await getUserVehicles();
+    } catch (error) {
+      console.log(`Refresh error: ${error}`);
+    } finally {
+      setRefreshing(false);
     }
   };
 
@@ -109,35 +185,25 @@ export default function DashboardScreen() {
 
       <Text style={styles.sectionTitle}>My Vehicles</Text>
 
-      <TouchableOpacity style={styles.vehicleCard}>
-        <Ionicons name="car" size={32} color="#000000" />
-
-        <View>
-          <Text style={styles.vehicleName}>Toyota Prius</Text>
-
-          <Text style={styles.vehicle_no}>WP CAB 1234</Text>
+      {loadingVehicles ? (
+        <Text style={styles.loadingText}>Loading Vehicles...</Text>
+      ) : vehicles.length === 0 ? (
+        <View style={styles.emptyContainer}>
+          <Ionicons name="car-outline" size={50} color="#CBD5E1" />
+          <Text style={styles.emptyText}>No Vehicles Found</Text>
         </View>
-      </TouchableOpacity>
-
-      <TouchableOpacity style={styles.vehicleCard}>
-        <Ionicons name="car" size={32} color="#000000" />
-
-        <View>
-          <Text style={styles.vehicleName}>Honda Vezel</Text>
-
-          <Text style={styles.vehicle_no}>WP CAR 9876</Text>
-        </View>
-      </TouchableOpacity>
-
-      <TouchableOpacity style={styles.vehicleCard}>
-        <Ionicons name="car" size={32} color="#000000" />
-
-        <View>
-          <Text style={styles.vehicleName}>Honda Vezel</Text>
-
-          <Text style={styles.vehicle_no}>WP CAR 9876</Text>
-        </View>
-      </TouchableOpacity>
+      ) : (
+        <FlatList
+          data={vehicles}
+          keyExtractor={(item) => item.vehicle_no}
+          scrollEnabled={false}
+          renderItem={({ item }) => (
+            <VehicleCard vehicle={item} onDelete={onPressDeleteVehicle} />
+          )}
+          refreshing={refreshing}
+          onRefresh={refreshVehicles}
+        />
+      )}
     </ScrollView>
   );
 }
@@ -147,7 +213,21 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#000b58"
   },
-
+  loadingText: {
+    color: "#FFFFFF",
+    textAlign: "center",
+    marginTop: 20,
+    fontFamily: "appFont"
+  },
+  emptyContainer: {
+    marginTop: 20,
+    alignItems: "center"
+  },
+  emptyText: {
+    marginTop: 10,
+    color: "#FFFFFF",
+    fontFamily: "appFont"
+  },
   header: {
     marginTop: 60,
     paddingHorizontal: 20,
@@ -281,3 +361,15 @@ const styles = StyleSheet.create({
     elevation: 4
   }
 });
+
+/*
+<TouchableOpacity style={styles.vehicleCard}>
+        <Ionicons name="car" size={32} color="#000000" />
+
+        <View>
+          <Text style={styles.vehicleName}>Toyota Prius</Text>
+
+          <Text style={styles.vehicle_no}>WP CAB 1234</Text>
+        </View>
+      </TouchableOpacity>
+*/
