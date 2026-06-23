@@ -1,4 +1,7 @@
-import { addVehicle } from "@/features/auth/services/add_vehicle_services";
+import {
+  addVehicle,
+  isAvailableThisVehicle
+} from "@/features/auth/services/add_vehicle_services";
 import {
   getContactNo,
   getName,
@@ -53,35 +56,55 @@ export default function AddVehicleScreen() {
   const handlingAddVehicle = async () => {
     if (!validateFields()) {
       return;
-    }
+    } else if (true) {
+      const response = await isAvailableThisVehicle(vehicleNo);
+      if (!response) {
+        try {
+          const imageURL = await uploadVehicleImage(image!);
 
-    try {
-      const imageURL = await uploadVehicleImage(image!);
+          console.log("Image URL: ", imageURL);
 
-      console.log("Image URL: ", imageURL);
+          const user_name = await getName();
+          const user_email = await getUserEmail();
+          const user_mobile = await getContactNo();
+          const nic = await getNIC();
 
-      const user_name = await getName();
-      const user_email = await getUserEmail();
-      const user_mobile = await getContactNo();
-      const nic = await getNIC();
-
-      if (user_name && user_email && user_mobile && nic) {
-        const response = await addVehicle(
-          user_name,
-          user_email,
-          user_mobile,
-          nic,
-          imageURL,
-          vehicleNo,
-          type,
-          model,
-          color
+          if (user_name && user_email && user_mobile && nic) {
+            const response = await addVehicle(
+              user_name,
+              user_email,
+              user_mobile,
+              nic,
+              imageURL,
+              vehicleNo,
+              type,
+              model,
+              color
+            );
+            Alert.alert("Vehicle", "Your vehicle successfully added!", [{}], {
+              cancelable: true
+            });
+            setVehicleNo("");
+            setModel("");
+            setType("Car");
+            setColor("");
+            setImage("");
+          }
+        } catch (error) {}
+      } else {
+        setErrors((prev) => ({
+          ...prev,
+          vehicleNoError: "This vehicle is exist!"
+        }));
+        Alert.alert(
+          "Already Registered!",
+          "This vehicle has already been registered",
+          [{}],
+          { cancelable: true }
         );
-        Alert.alert("Vehicle", "Your vehicle successfully added!", [{}], {
-          cancelable: true
-        });
+        return;
       }
-    } catch (error) {}
+    }
   };
 
   const validateFields = () => {
