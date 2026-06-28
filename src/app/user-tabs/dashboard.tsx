@@ -1,6 +1,8 @@
 import {
   Alert,
   FlatList,
+  Image,
+  Modal,
   ScrollView,
   StyleSheet,
   Text,
@@ -28,6 +30,7 @@ export default function DashboardScreen() {
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [loadingVehicles, setLoadingVehicles] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [vehicleModalVisible, setVehicleModalVisible] = useState(false);
 
   useEffect(() => {
     getGreeting();
@@ -86,7 +89,56 @@ export default function DashboardScreen() {
   };
 
   const handleReqHelp = async () => {
-    setRequestHelp(!getRequestHelp);
+    if (getRequestHelp) {
+      Alert.alert(
+        "Cancel Request",
+        "Do you want to cancel request ?",
+        [
+          {
+            text: "No",
+            style: "destructive",
+            onPress: () => {
+              setRequestHelp(true);
+            }
+          },
+          {
+            text: "Yes",
+            style: "cancel",
+            onPress: () => {
+              setRequestHelp(false);
+            }
+          }
+        ],
+        {
+          cancelable: true
+        }
+      );
+    } else {
+      Alert.alert(
+        "Make a Request",
+        "Do you want to make a request ?",
+        [
+          {
+            text: "No",
+            style: "destructive",
+            onPress: () => {
+              setRequestHelp(false);
+            }
+          },
+          {
+            text: "Yes",
+            style: "cancel",
+            onPress: () => {
+              setRequestHelp(true);
+              displayVehicleList();
+            }
+          }
+        ],
+        {
+          cancelable: true
+        }
+      );
+    }
   };
 
   const userNameGet = async () => {
@@ -125,6 +177,25 @@ export default function DashboardScreen() {
       setRefreshing(false);
     }
   };
+  /*
+  const makeHelpRequest = async () => {
+    const user_name = await getName();
+    const email = await getUserEmail();
+    const nic = await getNIC();
+    const contact_no = await getContactNo();
+    const address = await getAddress();
+    const vehicle_image = "";
+    const vehicle_no = "";
+    const model = "";
+    const type = "";
+    const color = "";
+  };
+
+  */
+
+  const displayVehicleList = () => {
+    setVehicleModalVisible(true);
+  };
 
   return (
     <ScrollView
@@ -135,7 +206,6 @@ export default function DashboardScreen() {
       }}
     >
       {/* Header */}
-
       <View style={styles.header}>
         <View>
           <Text style={styles.greeting}>
@@ -149,9 +219,7 @@ export default function DashboardScreen() {
           <Ionicons name="notifications-outline" size={28} color="#F8FAFC" />
         </TouchableOpacity>
       </View>
-
       {/* Emergency Card */}
-
       <View style={styles.emergencyCard}>
         <Ionicons name="car-sport" size={40} color="#fff" />
 
@@ -160,15 +228,17 @@ export default function DashboardScreen() {
         <Text style={styles.emergencySubTitle}>Request help instantly</Text>
 
         <TouchableOpacity
-          style={styles.helpButton}
+          style={[
+            !getRequestHelp ? styles.helpButton : styles.helpCancelButton
+          ]}
           onPress={() => handleReqHelp()}
         >
-          <Text style={styles.helpText}>Request Help</Text>
+          <Text style={styles.helpText}>
+            {!getRequestHelp ? "Request Help" : "Cancel Request"}
+          </Text>
         </TouchableOpacity>
       </View>
-
       {/* Map Section */}
-
       {getRequestHelp && (
         <>
           <Text style={styles.sectionTitle}>Live Tracking</Text>
@@ -180,11 +250,8 @@ export default function DashboardScreen() {
           </View>
         </>
       )}
-
       {/* Vehicles */}
-
       <Text style={styles.sectionTitle}>My Vehicles</Text>
-
       {loadingVehicles ? (
         <Text style={styles.loadingText}>Loading Vehicles...</Text>
       ) : vehicles.length === 0 ? (
@@ -204,6 +271,66 @@ export default function DashboardScreen() {
           onRefresh={refreshVehicles}
         />
       )}
+      {/* Pop Vehicle List*/}
+      <Modal
+        visible={vehicleModalVisible}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => setVehicleModalVisible(false)}
+      >
+        <View style={styles.modalBackground}>
+          <View style={styles.modalContainer}>
+            <Text style={styles.modalTitle}>Pick Your Vehicle</Text>
+
+            <FlatList
+              data={vehicles}
+              keyExtractor={(item) => item.vehicle_no}
+              showsVerticalScrollIndicator={false}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  onPress={() => {
+                    console.log(item.vehicle_no);
+                    console.log(item.name);
+                  }}
+                >
+                  <View style={styles.vehicleCardInList}>
+                    <Image
+                      source={{ uri: item.image_url }}
+                      style={styles.vehicleImage}
+                    />
+
+                    <View style={{ flex: 1 }}>
+                      <Text style={styles.vehicleNameInList}>{item.model}</Text>
+
+                      <Text>Vehicle No : {item.vehicle_no}</Text>
+
+                      <Text>Type : {item.type}</Text>
+
+                      <Text>Color : {item.color}</Text>
+
+                      <Text>Owner : {item.name}</Text>
+
+                      <Text>Contact : {item.contact_no}</Text>
+                    </View>
+                  </View>
+                </TouchableOpacity>
+              )}
+              ListEmptyComponent={() => (
+                <Text style={{ textAlign: "center", marginTop: 40 }}>
+                  No Vehicles Found
+                </Text>
+              )}
+            />
+
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={() => setVehicleModalVisible(false)}
+            >
+              <Text style={styles.closeText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </ScrollView>
   );
 }
@@ -277,6 +404,13 @@ const styles = StyleSheet.create({
   helpButton: {
     marginTop: 20,
     backgroundColor: "#000000",
+    paddingHorizontal: 18,
+    paddingVertical: 12,
+    borderRadius: 50
+  },
+  helpCancelButton: {
+    marginTop: 20,
+    backgroundColor: "#ff0000",
     paddingHorizontal: 18,
     paddingVertical: 12,
     borderRadius: 50
@@ -359,6 +493,77 @@ const styles = StyleSheet.create({
     alignItems: "center",
 
     elevation: 4
+  },
+  modalBackground: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center"
+  },
+
+  modalContainer: {
+    width: "92%",
+    height: "80%",
+    backgroundColor: "#FFF",
+    borderRadius: 20,
+    padding: 20
+  },
+
+  modalTitle: {
+    fontSize: 24,
+    fontWeight: "700",
+    marginBottom: 20,
+    textAlign: "center"
+  },
+
+  vehicleCardInList: {
+    flexDirection: "row",
+    backgroundColor: "#F8F9FA",
+    borderRadius: 15,
+    padding: 12,
+    marginBottom: 15,
+    elevation: 3,
+    alignItems: "center"
+  },
+
+  vehicleImage: {
+    width: 90,
+    height: 90,
+    borderRadius: 10,
+    marginRight: 15
+  },
+
+  vehicleNameInList: {
+    fontSize: 18,
+    fontWeight: "700",
+    marginBottom: 5
+  },
+
+  closeButton: {
+    marginTop: 15,
+    backgroundColor: "#0B4DFF",
+    padding: 15,
+    borderRadius: 10,
+    alignItems: "center"
+  },
+
+  closeText: {
+    color: "#FFF",
+    fontSize: 16,
+    fontWeight: "600"
+  },
+
+  button: {
+    backgroundColor: "#0B4DFF",
+    padding: 15,
+    borderRadius: 10,
+    alignItems: "center"
+  },
+
+  buttonText: {
+    color: "#FFF",
+    fontWeight: "700",
+    fontSize: 16
   }
 });
 
