@@ -58,10 +58,19 @@ export default function DashboardScreen() {
         return;
       }
 
-      const currentLocation = await Location.getCurrentPositionAsync({
-        accuracy: Location.Accuracy.High
-      });
-      setLocation(currentLocation);
+      // const currentLocation = await Location.getCurrentPositionAsync({
+      //   accuracy: Location.Accuracy.High
+      // });
+      // setLocation(currentLocation);
+      const subscription = await Location.watchPositionAsync(
+        {
+          accuracy: Location.Accuracy.High
+        },
+        (currentLocation) => {
+          console.log(currentLocation);
+          setLocation(currentLocation);
+        }
+      );
     } catch (error) {}
   };
 
@@ -226,7 +235,7 @@ export default function DashboardScreen() {
     const lon = location?.coords.longitude;
 
     if (lat != null && lon != null) {
-      const isEmpty = makeHelpRequestHandling(
+      const res = makeHelpRequestHandling(
         user_name!,
         email!,
         vehicle_image,
@@ -240,6 +249,7 @@ export default function DashboardScreen() {
         lat,
         lon
       );
+      console.log(`Response: ${res}`);
     }
   };
 
