@@ -15,12 +15,17 @@ import {
   deleteVehicle,
   getVehicles
 } from "@/features/auth/services/add_vehicle_services";
+import { makeHelpRequestHandling } from "@/features/auth/services/help_services";
 import {
+  getAddress,
+  getContactNo,
   getName,
-  getNIC
+  getNIC,
+  getUserEmail
 } from "@/features/business/services/async_storage_handling";
 import { Vehicle } from "@/models/vehicle_model";
 import { Ionicons } from "@expo/vector-icons";
+import * as Location from "expo-location";
 import { useEffect, useState } from "react";
 
 export default function DashboardScreen() {
@@ -31,12 +36,34 @@ export default function DashboardScreen() {
   const [loadingVehicles, setLoadingVehicles] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [vehicleModalVisible, setVehicleModalVisible] = useState(false);
+  const [location, setLocation] = useState<Location.LocationObject | null>();
+  const [loadingLocation, setLoadingLocation] = useState(false);
 
   useEffect(() => {
+    getUserCurrentLocation();
     getGreeting();
     userNameGet();
     getUserVehicles();
   }, []);
+
+  const getUserCurrentLocation = async () => {
+    try {
+      setLoadingLocation(true);
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        Alert.alert(
+          "Accessing Your Current Location",
+          "Location Permission Denied."
+        );
+        return;
+      }
+
+      const currentLocation = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.High
+      });
+      setLocation(currentLocation);
+    } catch (error) {}
+  };
 
   const getUserVehicles = async () => {
     try {
@@ -177,21 +204,44 @@ export default function DashboardScreen() {
       setRefreshing(false);
     }
   };
-  /*
-  const makeHelpRequest = async () => {
+
+  const makeHelpRequest = async (
+    vehicleImg: String,
+    vehicleNo: String,
+    vehicleModal: String,
+    vehicleType: String,
+    vehicleColor: String
+  ) => {
     const user_name = await getName();
     const email = await getUserEmail();
     const nic = await getNIC();
     const contact_no = await getContactNo();
     const address = await getAddress();
-    const vehicle_image = "";
-    const vehicle_no = "";
-    const model = "";
-    const type = "";
-    const color = "";
-  };
+    const vehicle_image = vehicleImg;
+    const vehicle_no = vehicleNo;
+    const model = vehicleModal;
+    const type = vehicleType;
+    const color = vehicleColor;
+    const lat = location?.coords.latitude;
+    const lon = location?.coords.longitude;
 
-  */
+    if (lat != null && lon != null) {
+      const isEmpty = makeHelpRequestHandling(
+        user_name!,
+        email!,
+        vehicle_image,
+        vehicle_no,
+        model,
+        type,
+        color,
+        nic!,
+        contact_no!,
+        address!,
+        lat,
+        lon
+      );
+    }
+  };
 
   const displayVehicleList = () => {
     setVehicleModalVisible(true);
@@ -288,9 +338,16 @@ export default function DashboardScreen() {
               showsVerticalScrollIndicator={false}
               renderItem={({ item }) => (
                 <TouchableOpacity
-                  onPress={() => {
-                    console.log(item.vehicle_no);
-                    console.log(item.name);
+                  onPress={async () => {
+                    await makeHelpRequest(
+                      item.image_url,
+                      item.vehicle_no,
+                      item.model,
+                      item.type,
+                      item.color
+                    );
+
+                    setVehicleModalVisible(false);
                   }}
                 >
                   <View style={styles.vehicleCardInList}>
