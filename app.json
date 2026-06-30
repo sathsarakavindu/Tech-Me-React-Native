@@ -18,7 +18,13 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "com.kavindu2001.businessdirectoryapp"
+      "package": "com.kavindu2001.businessdirectoryapp",
+      "permissions": ["ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION"],
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyDBcOSi87RmoF9_xUHjxEi-LIy6SmiRsAs"
+        }
+      }
     },
     "web": {
       "output": "static",
@@ -36,7 +42,19 @@
           }
         }
       ],
-      "expo-image"
+      "expo-image",
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow Tech Me to use your location for services."
+        }
+      ],
+      [
+        "react-native-maps",
+        {
+          "androidGoogleMapsApiKey": "AIzaSyDBcOSi87RmoF9_xUHjxEi-LIy6SmiRsAs"
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,
