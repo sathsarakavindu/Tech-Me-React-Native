@@ -1,5 +1,7 @@
+import * as Location from "expo-location";
 import { useEffect, useRef, useState } from "react";
 import {
+  Alert,
   Dimensions,
   FlatList,
   Image,
@@ -10,7 +12,7 @@ import {
   Text,
   View
 } from "react-native";
-import MapView, { Marker } from "react-native-maps";
+import MapView, { Marker, PROVIDER_GOOGLE, Region } from "react-native-maps";
 
 const { width } = Dimensions.get("window");
 
@@ -21,6 +23,11 @@ const banners = [
 ];
 
 export default function TechnicianDashboard() {
+  const mapRef = useRef<MapView>(null);
+  const [location, setLocation] = useState<Location.LocationObject | null>(
+    null
+  );
+  const [loadingLocation, setLoadingLocation] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const flatListRef = useRef<FlatList>(null);
@@ -40,12 +47,60 @@ export default function TechnicianDashboard() {
 
     return () => clearInterval(timer);
   }, [currentIndex]);
+  useEffect(() => {
+    getCurrentLocation();
+  }, []);
+
+  const getCurrentLocation = async () => {
+    try {
+      setLoadingLocation(true);
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        Alert.alert(
+          "Accessing Your Current Location",
+          "Location Permission Denied."
+        );
+        return;
+      }
+
+      const currentLocation = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.High
+      });
+      console.log(currentLocation);
+      setLocation(currentLocation);
+
+      setTimeout(() => {
+        mapRef.current?.animateToRegion(
+          {
+            latitude: currentLocation.coords.latitude,
+            longitude: currentLocation.coords.longitude,
+            latitudeDelta: 0.01,
+            longitudeDelta: 0.01
+          },
+          1000
+        );
+      }, 500);
+
+      const region: Region = {
+        latitude: currentLocation.coords.latitude,
+        longitude: currentLocation.coords.longitude,
+        latitudeDelta: 0.01,
+        longitudeDelta: 0.01
+      };
+      //mapRef.current?.animateToRegion(region, 1000);
+    } catch (error) {
+      console.log(`Current location error: ${error}`);
+    } finally {
+      setLoadingLocation(false);
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" />
 
       <ScrollView
+        nestedScrollEnabled={true}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 20 }}
       >
@@ -93,23 +148,78 @@ export default function TechnicianDashboard() {
         <View style={styles.mapCard}>
           <Text style={styles.mapTitle}>Live Tracking</Text>
 
-          <MapView
-            style={styles.map}
-            initialRegion={{
-              latitude: 6.9271,
-              longitude: 79.8612,
-              latitudeDelta: 0.05,
-              longitudeDelta: 0.05
-            }}
-          >
-            <Marker
-              coordinate={{
-                latitude: 6.9271,
-                longitude: 79.8612
+          {loadingLocation ? (
+            <View
+              style={{
+                height: 350,
+                justifyContent: "center",
+                alignItems: "center"
               }}
-              title="Current Location"
-            />
-          </MapView>
+            >
+              <Text>Getting your location...</Text>
+            </View>
+          ) : (
+            <MapView
+              loadingEnabled={true}
+              showsMyLocationButton={true}
+              showsUserLocation={true}
+              style={styles.map}
+              provider={PROVIDER_GOOGLE}
+              ref={mapRef}
+              region={{
+                latitude: location?.coords.latitude ?? 6.9271,
+                longitude: location?.coords.longitude ?? 79.8612,
+                latitudeDelta: 0.01,
+                longitudeDelta: 0.01
+              }}
+            >
+              {location && (
+                <Marker
+                  coordinate={{
+                    latitude: location.coords.latitude,
+                    longitude: location.coords.longitude
+                  }}
+                  title="Current Location"
+                />
+              )}
+            </MapView>
+
+            // <MapView
+            //   onMapReady={() => console.log("Map is ready")}
+            //   ref={mapRef}
+            //   provider={PROVIDER_GOOGLE}
+            //   style={styles.map}
+            //   showsUserLocation={true}
+            //   showsMyLocationButton={true}
+            //   loadingEnabled={true}
+            //   initialRegion={
+            //     location
+            //       ? {
+            //           latitude: location.coords.latitude,
+            //           longitude: location.coords.longitude,
+            //           latitudeDelta: 0.01,
+            //           longitudeDelta: 0.01
+            //         }
+            //       : {
+            //           latitude: 6.9271,
+            //           longitude: 79.8612,
+            //           latitudeDelta: 0.01,
+            //           longitudeDelta: 0.01
+            //         }
+            //   }
+            // >
+            //   {location && (
+            //     <Marker
+            //       coordinate={{
+            //         latitude: location.coords.latitude,
+            //         longitude: location.coords.longitude
+            //       }}
+            //       title="My Current Location"
+            //       description="Technician Position"
+            //     />
+            //   )}
+            // </MapView>
+          )}
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -258,7 +368,9 @@ const styles = StyleSheet.create({
 
   map: {
     height: 350,
-    borderRadius: 15
+    width: "100%",
+    borderRadius: 15,
+    overflow: "hidden"
   },
   imageOverlay: {
     position: "absolute",

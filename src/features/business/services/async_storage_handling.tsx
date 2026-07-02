@@ -95,3 +95,15 @@ export const getOTP = async () => {
 export const removeOTP = async () => {
   return await AsyncStorage.removeItem("otp");
 };
+
+export const setIsGetHelp = async (otp_code: string) => {
+  return await AsyncStorage.setItem("is_get_help", otp_code);
+};
+
+export const getIsGetHelp = async () => {
+  return await AsyncStorage.getItem("is_get_help");
+};
+
+export const removeIsGetHelp = async () => {
+  return await AsyncStorage.removeItem("is_get_help");
+};

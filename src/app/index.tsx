@@ -15,6 +15,8 @@ export default function Index() {
     const checkAuth = async () => {
       const token = await getAuthToken();
       const account = await getAccountType();
+      // const token = true;
+      // const account = "Technician";
 
       if (token && account) {
         setIsLoggedIn(true);
