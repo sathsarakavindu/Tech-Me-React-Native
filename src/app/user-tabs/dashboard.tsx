@@ -670,7 +670,10 @@ import {
   deleteVehicle,
   getVehicles
 } from "@/features/auth/services/add_vehicle_services";
-import { makeHelpRequestHandling } from "@/features/auth/services/help_services";
+import {
+  cancellationHelp,
+  makeHelpRequestHandling
+} from "@/features/auth/services/help_services";
 import { webSocketService } from "@/features/auth/services/websocket_service";
 import {
   getAddress,
@@ -680,6 +683,7 @@ import {
   getUserEmail
 } from "@/features/business/services/async_storage_handling";
 import { Vehicle } from "@/models/vehicle_model";
+import MapView, { Marker, PROVIDER_GOOGLE, Region } from "react-native-maps";
 
 export default function DashboardScreen() {
   const [getRequestHelp, setRequestHelp] = useState(false);
@@ -698,6 +702,7 @@ export default function DashboardScreen() {
   const [locationUpdateStatus, setLocationUpdateStatus] = useState<string>("");
   const locationWatchId = useRef<Location.LocationSubscription | null>(null);
   const isLocationStreaming = useRef(false);
+  const mapRef = useRef<MapView>(null);
 
   useEffect(() => {
     initializeApp();
@@ -777,6 +782,12 @@ export default function DashboardScreen() {
         accuracy: Location.Accuracy.High
       });
       setLocation(currentLocation);
+      const region: Region = {
+        latitude: currentLocation.coords.latitude,
+        longitude: currentLocation.coords.longitude,
+        latitudeDelta: 0.01,
+        longitudeDelta: 0.01
+      };
     } catch (error) {
       console.error("Error getting location:", error);
     } finally {
@@ -920,7 +931,8 @@ export default function DashboardScreen() {
           {
             text: "Yes",
             style: "cancel",
-            onPress: () => {
+            onPress: async () => {
+              await handlingCancelHelp(currentHelpId!);
               // Stop location streaming when cancelling
               stopLocationStreaming();
               setRequestHelp(false);
@@ -947,9 +959,6 @@ export default function DashboardScreen() {
             text: "Yes",
             style: "cancel",
             onPress: () => {
-              // Connect WebSocket before making request
-              webSocketService.connect();
-              setRequestHelp(true);
               displayVehicleList();
             }
           }
@@ -959,6 +968,30 @@ export default function DashboardScreen() {
         }
       );
     }
+  };
+
+  const handlingCancelHelp = async (helpId: string) => {
+    try {
+      const response = await cancellationHelp(helpId);
+
+      if (response) {
+        Alert.alert(
+          "Help Request Cancellation!",
+          `${response.data.message}`,
+          [
+            {
+              text: "Ok",
+              style: "cancel"
+            }
+          ],
+          {
+            cancelable: true
+          }
+        );
+      }
+
+      console.log(response?.data.message);
+    } catch (error) {}
   };
 
   const userNameGet = async () => {
@@ -1019,6 +1052,16 @@ export default function DashboardScreen() {
         );
         return;
       }
+      setRequestHelp(true);
+      // Connect WebSocket before making request
+      webSocketService.connect();
+
+      mapRef.current?.animateToRegion({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+        latitudeDelta: 0.01,
+        longitudeDelta: 0.01
+      });
 
       const lat = location.coords.latitude;
       const lon = location.coords.longitude;
@@ -1119,9 +1162,36 @@ export default function DashboardScreen() {
       {/* Map Section */}
       {getRequestHelp && (
         <>
-          <Text style={styles.sectionTitle}>Live Tracking</Text>
+          <Text style={[styles.sectionTitle]}>Live Tracking</Text>
 
-          <View style={styles.mapPlaceholder}>
+          <View style={styles.mapContainer}>
+            <MapView
+              style={styles.map}
+              loadingEnabled={true}
+              showsMyLocationButton={true}
+              showsUserLocation={true}
+              provider={PROVIDER_GOOGLE}
+              ref={mapRef}
+              region={{
+                latitude: location?.coords.latitude ?? 6.9271,
+                longitude: location?.coords.longitude ?? 79.8612,
+                latitudeDelta: 0.01,
+                longitudeDelta: 0.01
+              }}
+            >
+              {location && (
+                <Marker
+                  coordinate={{
+                    latitude: location.coords.latitude,
+                    longitude: location.coords.longitude
+                  }}
+                  title="Current Location"
+                />
+              )}
+            </MapView>
+          </View>
+
+          {/* <View style={styles.mapPlaceholder}>
             <Ionicons name="map" size={50} color="#94A3B8" />
             <Text>Google Map Here</Text>
             {locationUpdateStatus && (
@@ -1135,12 +1205,14 @@ export default function DashboardScreen() {
                 {location.coords.longitude.toFixed(6)}
               </Text>
             )}
-          </View>
+          </View> */}
         </>
       )}
 
       {/* Vehicles */}
-      <Text style={styles.sectionTitle}>My Vehicles</Text>
+      <Text style={[styles.sectionTitle, { marginTop: 15, marginBottom: 20 }]}>
+        My Vehicles
+      </Text>
       {loadingVehicles ? (
         <Text style={styles.loadingText}>Loading Vehicles...</Text>
       ) : vehicles.length === 0 ? (
@@ -1231,6 +1303,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#000b58"
   },
+
   loadingText: {
     color: "#FFFFFF",
     textAlign: "center",
@@ -1321,8 +1394,7 @@ const styles = StyleSheet.create({
     fontFamily: "appFont"
   },
   sectionTitle: {
-    marginTop: 25,
-    marginBottom: 10,
+    marginTop: 15,
     paddingHorizontal: 20,
     fontSize: 18,
     fontFamily: "appFont",
@@ -1336,6 +1408,29 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     elevation: 4
+  },
+  mapContainer: {
+    height: 280,
+    margin: 20,
+    borderRadius: 24,
+    overflow: "hidden", // This clips the map view
+    backgroundColor: "#fff",
+    elevation: 4,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4
+  },
+  map: {
+    flex: 1,
+    width: "100%"
+
+    // height: 350,
+    // width: "100%",
+    // borderRadius: 24,
+    // overflow: "hidden",
+    // elevation: 4,
+    // marginBottom: 20
   },
   statusUpdateText: {
     marginTop: 8,

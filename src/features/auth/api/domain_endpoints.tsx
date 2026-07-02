@@ -19,7 +19,7 @@ export const IsAvailableThisVehicle = "/api/vehicle/is-vehicle-available/";
 
 //Help APIs
 export const MakeHelp = "/api/users/help/make-help/";
-export const CanelHelp = "/api/users/help/cancel-help/";
+export const CancelHelp = "/api/users/help/cancel-help/";
 export const ApproveHelp = "/api/users/help/approve-help/";
 export const NotApproveHelp = "/api/users/help/not-approve-help/";
 export const GetMadeHelps = "/api/users/help/get-helps/";

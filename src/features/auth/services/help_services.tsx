@@ -1,5 +1,5 @@
 import apiClient from "../api/apiClient";
-import { MakeHelp } from "../api/domain_endpoints";
+import { CancelHelp, MakeHelp } from "../api/domain_endpoints";
 
 export const makeHelpRequestHandling = async (
   user_name: String,
@@ -37,6 +37,19 @@ export const makeHelpRequestHandling = async (
     return null;
   } catch (error) {
     console.log(`The error is in makeHelpRequest: ${error}`);
-  return null;
+    return null;
+  }
+};
+
+export const cancellationHelp = async (make_help_id: string) => {
+  try {
+    const response = await apiClient.post(CancelHelp, { make_help_id });
+    if (response.status == 200) {
+      return response;
+    }
+    return null;
+  } catch (error) {
+    console.log(`The error is in cancelHelp: ${error}`);
+    return null;
   }
 };
