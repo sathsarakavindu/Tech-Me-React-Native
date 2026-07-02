@@ -32,10 +32,11 @@ export const makeHelpRequestHandling = async (
     });
 
     if (response.status == 200) {
-      console.log(response.data);
-      return response.data;
+      return await response.data;
     }
+    return null;
   } catch (error) {
     console.log(`The error is in makeHelpRequest: ${error}`);
+  return null;
   }
 };
