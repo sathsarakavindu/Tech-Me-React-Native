@@ -1,12 +1,14 @@
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Vehicle } from "../models/vehicle_model";
 
 interface Props {
   vehicle: Vehicle;
   onDelete: (id: string) => void;
+  onEdit: (id: string) => void;
 }
 
-export default function VehicleCard({ vehicle, onDelete }: Props) {
+export default function VehicleCard({ vehicle, onDelete, onEdit }: Props) {
   return (
     <TouchableOpacity
       style={styles.vehicleCard}
@@ -37,7 +39,12 @@ export default function VehicleCard({ vehicle, onDelete }: Props) {
 
       {/* Arrow */}
 
-      {/* <Ionicons name="chevron-forward" size={22} color="#94A3B8" /> */}
+      {/* <Ionicons name="chevron-expand-outline" size={22} color="#94A3B8" /> */}
+      <FontAwesome6
+        onPress={() => onEdit(vehicle.vehicle_no)}
+        name="edit"
+        size={20}
+      />
     </TouchableOpacity>
   );
 }
