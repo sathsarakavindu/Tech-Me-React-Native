@@ -53,24 +53,24 @@ export const getVehicles = async (nic: string): Promise<Vehicle[]> => {
   }
 };
 
-const updateVehicle = async (
-  nic: string,
-  image_url: string,
+export const updateVehicle = async (
+  _id: string,
   vehicle_no: string,
   type: string,
   model: string,
   color: string
 ) => {
   try {
+    _id;
     const response = await apiClient.put(EditVehicleURL, {
-      nic,
-      image_url,
+      _id,
       vehicle_no,
       type,
       model,
       color
     });
     if (response) {
+      return response.data;
     }
   } catch (error) {
     console.log(`The error is in updateVehicle: ${error}`);

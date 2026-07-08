@@ -1,11 +1,12 @@
 import { Ionicons } from "@expo/vector-icons";
 import * as Location from "expo-location";
-import { useEffect, useRef, useState } from "react";
+import { RefObject, useEffect, useRef, useState } from "react";
 import {
   Alert,
   FlatList,
   Image,
   Modal,
+  RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
@@ -17,7 +18,8 @@ import {
 import VehicleCard from "@/components/vehicle_card";
 import {
   deleteVehicle,
-  getVehicles
+  getVehicles,
+  updateVehicle
 } from "@/features/auth/services/add_vehicle_services";
 import {
   cancellationHelp,
@@ -32,6 +34,7 @@ import {
   getUserEmail
 } from "@/features/business/services/async_storage_handling";
 import { Vehicle } from "@/models/vehicle_model";
+import { Picker } from "@react-native-picker/picker";
 import MapView, { Marker, PROVIDER_GOOGLE, Region } from "react-native-maps";
 
 export default function DashboardScreen() {
@@ -53,6 +56,13 @@ export default function DashboardScreen() {
   const locationWatchId = useRef<Location.LocationSubscription | null>(null);
   const isLocationStreaming = useRef(false);
   const mapRef = useRef<MapView>(null);
+  const [vehicleNo, setVehicleNo] = useState<string>("");
+  const [model, setModel] = useState<string>("");
+  const [color, setColor] = useState<string>("");
+  const category = useRef<string>("");
+  const vehicleUniqueId = useRef<string>("");
+
+  const vehicleTypes = ["Car", "Van", "Three Wheeler", "Bike", "Lorry", "Bus"];
 
   useEffect(() => {
     initializeApp();
@@ -253,8 +263,22 @@ export default function DashboardScreen() {
     );
   };
 
-  const onPressEditVehicle = async (vehicle_no: string) => {
-    setEditVehicleVisible(true);
+  const onPressEditVehicle = async (_id: string) => {
+    try {
+      vehicleUniqueId.current = _id;
+      const correctVehicle = vehicles.find((item) => item._id == _id);
+      if (correctVehicle) {
+        console.log(correctVehicle._id);
+        setVehicleNo(correctVehicle.vehicle_no);
+        setModel(correctVehicle.model);
+        setColor(correctVehicle.color);
+        category.current = correctVehicle.type;
+        setEditVehicleVisible(true);
+      }
+    } catch (error) {
+      Alert.alert("Vehicle Can't be found!");
+      console.log(error);
+    }
   };
 
   const handlingVehicleDeletion = async (vehicle_no: string) => {
@@ -378,6 +402,8 @@ export default function DashboardScreen() {
     try {
       setRefreshing(true);
       await getUserVehicles();
+      await userNameGet();
+      getGreeting();
     } catch (error) {
       console.log(`Refresh error: ${error}`);
     } finally {
@@ -455,6 +481,24 @@ export default function DashboardScreen() {
     setVehicleModalVisible(true);
   };
 
+  const editVehicleInfoHandling = async () => {
+    if (vehicleNo.trim() === "" || model.trim() === "" || color.trim() === "") {
+      Alert.alert("Vehicle Infomation can't be empty!");
+
+      return;
+    } else {
+      const res = await updateVehicle(
+        vehicleUniqueId.current,
+        vehicleNo,
+        category.current,
+        model,
+        color
+      );
+      setEditVehicleVisible(false);
+      Alert.alert("Vehicle Successfully Updated!");
+    }
+  };
+
   return (
     <ScrollView
       style={styles.container}
@@ -462,6 +506,13 @@ export default function DashboardScreen() {
       contentContainerStyle={{
         paddingBottom: 110
       }}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={refreshVehicles}
+          colors={["#0B4DFF"]}
+        />
+      }
     >
       {/* Header */}
       <View style={styles.header}>
@@ -676,7 +727,11 @@ export default function DashboardScreen() {
             <TextInput
               scrollEnabled={false}
               style={styles.input}
-              placeholder="WP CAB 1234"
+              value={vehicleNo}
+              onChangeText={(value) => {
+                setVehicleNo(value);
+              }}
+              // placeholder="WP CAB 1234"
             />
 
             {/*Vehicle Modal*/}
@@ -695,6 +750,8 @@ export default function DashboardScreen() {
               scrollEnabled={false}
               style={styles.input}
               placeholder="Toyota Prius"
+              value={model}
+              onChangeText={(value) => setModel(value)}
             />
             {/* Vehicle Color */}
 
@@ -711,7 +768,8 @@ export default function DashboardScreen() {
             <TextInput
               scrollEnabled={false}
               style={styles.input}
-              placeholder="Space Grey"
+              value={color}
+              onChangeText={(value) => setColor(value)}
             />
 
             {/* Vehicle Category */}
@@ -722,17 +780,31 @@ export default function DashboardScreen() {
               <Text style={{ marginLeft: 5 }}>Vehicle Category</Text>
             </View>
 
-            <TextInput
+            {/* <TextInput
               scrollEnabled={false}
               style={styles.input}
-              placeholder="Car"
-            />
+              // placeholder="Car"
+              value={category.current}
+            /> */}
+
+            <View style={styles.picketStyle}>
+              <Picker
+                onValueChange={(itemValue: RefObject) => {
+                  category.current = itemValue;
+                }}
+                selectedValue={category}
+              >
+                {vehicleTypes.map((item) => (
+                  <Picker.Item key={item} label={item} value={item} />
+                ))}
+              </Picker>
+            </View>
 
             <TouchableOpacity
-              onPress={() => {}}
+              onPress={() => editVehicleInfoHandling()}
               style={{
                 alignItems: "center",
-                marginTop: 12,
+                marginTop: 20,
                 backgroundColor: "#0B4DFF",
                 paddingVertical: 8,
                 borderRadius: 8
@@ -746,6 +818,29 @@ export default function DashboardScreen() {
                 }}
               >
                 Save Changes
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => {
+                setEditVehicleVisible(false);
+              }}
+              style={{
+                alignItems: "center",
+                marginTop: 20,
+                backgroundColor: "#000000",
+                paddingVertical: 8,
+                borderRadius: 8
+              }}
+            >
+              <Text
+                style={{
+                  color: "#ffffff",
+                  fontFamily: "appFont",
+                  fontSize: 12
+                }}
+              >
+                Cancel
               </Text>
             </TouchableOpacity>
           </View>
@@ -768,6 +863,16 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginTop: 10,
     marginBottom: 10
+  },
+  picketStyle: {
+    marginTop: 10,
+    fontSize: 12,
+    color: "#111827",
+    fontFamily: "appFont",
+    borderWidth: 1.5,
+    borderRadius: 10,
+    borderColor: "#111827",
+    marginBottom: 8
   },
   vehicleEditTitle: {
     textAlign: "center",
@@ -983,7 +1088,7 @@ const styles = StyleSheet.create({
   },
   vehicleEditContainer: {
     width: "92%",
-    height: "90%",
+    height: "98%",
     backgroundColor: "#FFF",
     borderRadius: 20,
     padding: 12

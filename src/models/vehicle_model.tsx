@@ -1,4 +1,5 @@
 export interface Vehicle {
+  _id: string;
   name: string;
   email: string;
   contact_no: string;

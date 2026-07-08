@@ -40,11 +40,7 @@ export default function VehicleCard({ vehicle, onDelete, onEdit }: Props) {
       {/* Arrow */}
 
       {/* <Ionicons name="chevron-expand-outline" size={22} color="#94A3B8" /> */}
-      <FontAwesome6
-        onPress={() => onEdit(vehicle.vehicle_no)}
-        name="edit"
-        size={20}
-      />
+      <FontAwesome6 onPress={() => onEdit(vehicle._id)} name="edit" size={20} />
     </TouchableOpacity>
   );
 }
